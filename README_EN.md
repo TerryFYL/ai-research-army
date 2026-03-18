@@ -1,6 +1,6 @@
 # AI Research Army ⚔️🔬
 
-> Turn Claude Code into your medical research team. 10 AI specialists collaborate autonomously — from raw data to submission-ready manuscripts.
+> Turn Claude Code into your medical research team. 8 AI specialists collaborate autonomously — from raw data to submission-ready manuscripts.
 
 [中文](README.md) | English
 
@@ -8,9 +8,9 @@
 
 ## Features
 
-- **Medical research focused** — optimized for clinical studies (STROBE/CONSORT compliance, data forensics, P-hacking prevention)
-- **10 AI specialists** — not one AI switching hats, but 10 virtual researchers with distinct personas, expertise, and thinking patterns
-- **Fully autonomous** — one prompt triggers 11 pipeline stages; resume from breakpoints if interrupted
+- **Medical research focused** — optimized for clinical studies (STROBE/CONSORT compliance, P-hacking prevention)
+- **8 AI specialists** — not one AI switching hats, but 8 virtual researchers with distinct personas, expertise, and thinking patterns
+- **Fully autonomous** — one prompt triggers 9 pipeline stages; resume from breakpoints if interrupted
 - **Quality loop** — 8-layer review + up to 3 auto-iteration rounds until the manuscript passes
 - **Model-agnostic** — runs on Claude Opus/Sonnet/Haiku; better model = better output, but all work
 - **Pure Markdown** — zero dependencies, zero lock-in; every skill is just a `SKILL.md` file
@@ -52,13 +52,12 @@ Output from a single `/start-army` run:
 | Deliverable | Description |
 |--------|------|
 | `requirement_v1.md` | Structured requirement specification |
-| `forensics_report.md` | Data forensics report with GREEN/YELLOW/RED quality gate |
-| `data_dictionary.md` | Complete dictionary for 265 variables |
+| `data_dictionary.md` | Complete variable dictionary |
 | `data_profile_report.md` | Data profile (distributions, missing patterns, outliers) |
 | `research_plan.md` | Research design + hypotheses + statistical plan |
-| `analysis_results.md` | Complete results from 5 analyses |
-| `results/*.csv` | 7 reproducible statistical result tables |
-| `figures/*.png/.tiff` | 6 publication-grade figures at 300 DPI |
+| `analysis_results.md` | Complete results from multiple analyses |
+| `results/*.csv` | Reproducible statistical result tables |
+| `figures/*.png/.tiff` | Publication-grade figures at 300 DPI |
 | `verified_ref_pool.md` | Reference pool with verification status |
 | `manuscript.md` | ~6000-word IMRAD submission-ready draft |
 | `quality_report.md` | 8-layer review report with iteration log |
@@ -115,26 +114,19 @@ Then sit back and wait for your submission package.
 
 ## Pipeline
 
-11-stage pipeline, each stage executed by a specialized agent:
+9-stage pipeline, each stage executed by a specialized agent:
 
 ```
 /start-army "research request"
        |
        v
- +-----------+     +-----------+     +-----------+     +----------------+
- | Require.  | --> | Forensics | --> | Profiling | --> | Research       |
- | Crystal.  |     |           |     |           |     | Design         |
- | (Priya)   |     | (Ming)    |     | (Ming)    |     | (Priya+Kenji)  |
- +-----------+     +-----------+     +-----------+     +----------------+
-                     |GATE|                                     |
-                     |RED=STOP|                                 v
-                                                       +----------------+
-                                                       | Statistical    |
-                                                       | Analysis       |
-                                                       | (Kenji)        |
-                                                       +----------------+
-                                                               |
-       +-------------------------------------------------------+
+ +-----------+     +-----------+     +----------------+     +----------------+
+ | Require.  | --> | Data      | --> | Research       | --> | Statistical    |
+ | Crystal.  |     | Profiling |     | Design         |     | Analysis       |
+ | (Priya)   |     | (Ming)    |     | (Priya+Kenji)  |     | (Kenji)        |
+ +-----------+     +-----------+     +----------------+     +----------------+
+                                                                    |
+       +------------------------------------------------------------+
        v
  +-----------+     +-----------+     +-----------+     +----------------+
  | Figures   | --> | Literature| --> | Manuscript| --> | Reference      |
@@ -149,17 +141,10 @@ Then sit back and wait for your submission package.
                                                        +----------------+
                                                                |
                                                                v
-                                                       +----------------+
-                                                       | Submission     |
-                                                       | Package        |
-                                                       +----------------+
-                                                               |
-                                                               v
                                                           [ Delivery ]
 ```
 
-**Three gates**:
-- **Data Forensics**: RED = terminate project; YELLOW = requires confirmation
+**Two gates**:
 - **Reference Verification**: Basic PubMed check (full multi-source cross-validation in development)
 - **Quality Review**: 8-layer check, up to 3 rounds, no pass = no delivery
 
@@ -171,16 +156,14 @@ Then sit back and wait for your submission package.
 |------|------|---------|
 | **Wei** | Coordinator | Orchestration, risk sensing, cost control |
 | **Priya** | Requirement Analyst | Requirement crystallization, research design, narrative seeding |
-| **Ming** | Data Engineer | Data forensics (7 tests), cleaning, variable standardization |
+| **Ming** | Data Engineer | Data cleaning, variable standardization, data profiling |
 | **Kenji** | Biostatistician | Hypothesis testing, effect size interpretation, P-hacking prevention |
 | **Hao** | Academic Writer | IMRAD drafting, narrative arc, reader mental modeling |
 | **Lena** | Visualization Designer | Publication-grade figures, data reconciliation, colorblind-safe |
 | **Alex** | Quality Reviewer | 8-layer review, number tracing, academic integrity veto |
 | **Jing** | Literature Researcher | PICOS search, PRISMA compliance, citation verification |
-| **Sarah** | Content Marketer | Pain-point content, channel operations, conversion funnel |
-| **Tom** | Operations Manager | Pricing strategy, unit economics, funnel management |
 
-> Wei orchestrates but doesn't write. Sarah and Tom handle business — they don't participate in the research pipeline.
+> Wei orchestrates but doesn't write.
 
 ---
 
@@ -189,7 +172,6 @@ Then sit back and wait for your submission package.
 | Skill | Command | Description |
 |-------|------|------|
 | Full Pipeline | `/start-army "request"` | End-to-end, one command |
-| Data Forensics | `/data-forensics` | 7 tests + GREEN/YELLOW/RED gate |
 | Data Profiling | `/data-profiler` | Data profile + dictionary |
 | Research Design | `/research-design` | Plan + narrative + STROBE/CONSORT |
 | Statistics | `/stat-analysis` | Hypothesis-driven + multi-path explorer |
@@ -239,23 +221,6 @@ Adapt to other fields by replacing:
 
 ---
 
-## Comparison with ARIS
-
-[ARIS](https://github.com/wanshuiyin/Auto-claude-code-research-in-sleep) is another excellent Claude Code research project. The two are complementary, not competing.
-
-| Dimension | ARIS | AI Research Army |
-|------|------|-----------|
-| Domain | ML/CS (arXiv, GPU) | Medical/Clinical (NHANES, STROBE) |
-| Core | Cross-model review loop | Multi-agent + narrative-driven |
-| Experiments | GPU deployment | Data analysis + statistical tests |
-| Quality | Score >= 6/10 | 8-layer review + number traceability |
-| Output | LaTeX paper | Word submission package |
-| Dependencies | Python + LaTeX + GPU | Pure Markdown, zero deps |
-
-> For ML/CS research, check out ARIS. For medical/clinical/public health, try AI Research Army.
-
----
-
 ## FAQ
 
 **Does it run out of the box?** Yes. After `bash install.sh`, run `/start-army "your request"`. Agent personas are simplified — customize as needed.
@@ -270,7 +235,6 @@ Adapt to other fields by replacing:
 
 ## Acknowledgments
 
-- [ARIS](https://github.com/wanshuiyin/Auto-claude-code-research-in-sleep) — inspired the skills architecture
 - [Claude Code](https://docs.anthropic.com/en/docs/claude-code) — execution engine
 - [NHANES](https://www.cdc.gov/nchs/nhanes/index.htm) — commonly used data source
 

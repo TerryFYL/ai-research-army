@@ -8,7 +8,7 @@ allowed-tools: Bash(*), Read, Write, Edit, Grep, Glob, WebSearch, WebFetch, Agen
 # AI 科研军团 - 全流程编排器
 
 ## 概述
-科研军团的中枢调度系统，串联从需求结晶到投稿包组装的十个阶段。全程自主执行，仅在数据鉴伪亮红灯或缺少关键信息时停下请示用户。支持断点续跑——上下文窗口耗尽后重新启动即可从中断处继续。
+科研军团的中枢调度系统，串联从需求结晶到投稿包组装的九个阶段。全程自主执行，仅在缺少关键信息时停下请示用户。支持断点续跑——上下文窗口耗尽后重新启动即可从中断处继续。
 
 ## 常量
 
@@ -16,7 +16,6 @@ allowed-tools: Bash(*), Read, Write, Edit, Grep, Glob, WebSearch, WebFetch, Agen
 AUTO_PROCEED = true          # 阶段间自动推进，不等待用户确认
 MAX_REVIEW_ROUNDS = 3        # 质量审查最多迭代 3 轮
 QUALITY_GATE_SCORE = 70      # 质量审查通过线（B 级）
-FORENSICS_GATE = true        # 数据鉴伪为强制门控
 PROJECT_ROOT = ./             # 所有产出物相对此目录
 ```
 
@@ -40,60 +39,51 @@ PROJECT_ROOT = ./             # 所有产出物相对此目录
 - 产出：`requirement_v1.md`
 - 更新 `progress.md`
 
-### Step 2: 数据鉴伪（门控）
-- 调用 `/data-forensics [数据文件路径]`
-- 以 Ming 的视角执行（参考 ~/.claude/agents/ming.md）
-- **这是强制门控**：
-  - GREEN → 自动继续
-  - YELLOW → 记录警告，继续执行但在论文中披露
-  - RED → **立即停止流水线**，向用户报告问题，等待决策
-- 更新 `progress.md`
-
-### Step 3: 数据探查
+### Step 2: 数据探查
 - 调用 `/data-profiler [数据文件路径]`
 - 以 Ming 的视角执行（参考 ~/.claude/agents/ming.md）
 - 产出：`data_dictionary.md` + `data_profile_report.md`
 - 生成清洁的分析就绪数据集
 - 更新 `progress.md`
 
-### Step 4: 研究设计
+### Step 3: 研究设计
 - 调用 `/research-design [研究方向]`
 - Priya（选题）+ Kenji（可行性）协作执行
 - 以 Priya 的视角执行（参考 ~/.claude/agents/priya.md）
 - 产出：`research_plan.md` + `narrative_thread.md`
 - 更新 `progress.md`
 
-### Step 5: 统计分析
+### Step 4: 统计分析
 - 调用 `/stat-analysis [research_plan.md]`
 - 以 Kenji 的视角执行（参考 ~/.claude/agents/kenji.md）
 - 产出：`analysis_results.md` + 统计表格 + 分析代码
 - 更新 `progress.md`
 
-### Step 6: 学术图表
+### Step 5: 学术图表
 - 调用 `/academic-figure [analysis_results.md]`
 - 以 Lena 的视角执行（参考 ~/.claude/agents/lena.md）
 - 产出：`figures/` 目录（TIFF + 图例文本）
 - 更新 `progress.md`
 
-### Step 7: 文献调研
+### Step 6: 文献调研
 - 调用 `/ref-manager search [研究主题]`
 - 以 Jing 的视角执行（参考 ~/.claude/agents/jing.md）
 - 产出：`verified_ref_pool.md`
 - 更新 `progress.md`
 
-### Step 8: 论文撰写
+### Step 7: 论文撰写
 - 调用 `/manuscript-draft [分析结果 + 文献]`
 - 以 Hao 的视角执行（参考 ~/.claude/agents/hao.md）
 - 产出：`manuscript.md`
 - 更新 `progress.md`
 
-### Step 9: 引用验证（🚧 开发中）
+### Step 8: 引用验证（🚧 开发中）
 - **此功能正在开发中，完整版将支持跨数据库（CrossRef + PubMed + Google Scholar）逐条自动验证**
 - 当前版本请手动检查论文中的引用准确性
 - 建议：对每条引用至少在 Google Scholar 中搜索确认标题和作者
 - 更新 `progress.md`
 
-### Step 10: 质量审查（自动迭代）
+### Step 9: 质量审查（自动迭代）
 - 调用 `/quality-review [manuscript.md]`
 - 以 Alex 的视角执行（参考 ~/.claude/agents/alex.md）
 - 自动循环：审查 → 修复 → 重审，最多 MAX_REVIEW_ROUNDS 轮
@@ -101,7 +91,7 @@ PROJECT_ROOT = ./             # 所有产出物相对此目录
 - 产出：`quality_report.md` + `REVIEW_STATE.json`
 - 更新 `progress.md`
 
-### Step 11: 投稿包组装
+### Step 10: 投稿包组装（可选）
 - 调用 `/submit-package [manuscript.md + 目标期刊]`
 - 产出：`submission_package/` 目录
 - 包含：论文 Word 版 + 图表 + Cover Letter + 报告清单 + 作者声明
@@ -120,13 +110,13 @@ PROJECT_ROOT = ./             # 所有产出物相对此目录
 
 ## 流水线状态
 - [x] 需求结晶 (2026-03-18 10:00)
-- [x] 数据鉴伪 GREEN (2026-03-18 10:15)
-- [x] 数据探查 (2026-03-18 10:30)
+- [x] 数据探查 (2026-03-18 10:15)
 - [ ] 研究设计 <- 当前阶段
 - [ ] 统计分析
 - [ ] 学术图表
 - [ ] 文献调研
 - [ ] 论文撰写
+- [ ] 引用验证
 - [ ] 质量审查
 - [ ] 投稿包组装
 
@@ -144,7 +134,7 @@ PROJECT_ROOT = ./             # 所有产出物相对此目录
 - `submission_package/` — 最终投稿包
 
 ## 关键规则
-1. **全流程自主执行**：AUTO_PROCEED=true 时，阶段间不停顿。唯二停止条件：(a) 数据鉴伪 RED，(b) 缺少用户才能提供的关键信息
+1. **全流程自主执行**：AUTO_PROCEED=true 时，阶段间不停顿。唯一停止条件：缺少用户才能提供的关键信息
 2. **断点恢复**：每次启动先检查 `progress.md`，有则续跑，无则新建
 3. **Agent 角色切换**：每个阶段开始时读取对应 agent 文件，切换思维模式
 4. **进度实时更新**：每完成一个阶段立即写入 `progress.md`，确保中断后可恢复
