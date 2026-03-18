@@ -1,0 +1,71 @@
+# ============================================================
+# AI 科研军团 .gitignore
+# ============================================================
+
+# ------ 数据文件（不提交原始数据） ------
+*.csv
+*.xlsx
+*.xls
+*.sav
+*.dta
+*.sas7bdat
+*.rds
+*.rda
+*.parquet
+*.feather
+*.h5
+*.hdf5
+
+# ------ 项目产出（每个项目独立管理） ------
+outputs/
+submission_package/
+figures/
+delivery/
+
+# ------ 系统文件 ------
+.DS_Store
+Thumbs.db
+*.swp
+*.swo
+*~
+
+# ------ Python ------
+*.pyc
+__pycache__/
+*.egg-info/
+dist/
+build/
+.venv/
+venv/
+env/
+
+# ------ R ------
+.Rhistory
+.RData
+.Rproj.user/
+
+# ------ 凭证和敏感信息 ------
+.env
+.env.*
+*.key
+*.pem
+credentials/
+secrets/
+
+# ------ IDE ------
+.idea/
+.vscode/
+*.code-workspace
+
+# ------ 错误数据库 ------
+errors.db
+E:/
+
+# ------ 日志 ------
+*.log
+logs/
+
+# ------ 临时文件 ------
+tmp/
+temp/
+*.tmp

@@ -1,0 +1,129 @@
+# AI 科研军团 -- 项目状态文件
+# 用于断点续跑和迭代控制
+#
+# 使用说明:
+#   - 每个阶段完成后自动更新此文件
+#   - 断点续跑时读取此文件恢复状态
+#   - 人工干预后手动修改相关字段
+#
+# 状态值说明:
+#   status: in_progress / completed / blocked / failed
+#   data_forensics gate: GREEN / YELLOW / RED
+#   quality_grade: A(>=90) / B(>=75) / C(>=60) / D(<60)
+
+project:
+  name: ""
+  description: ""
+  requirement_version: 1
+  created_at: ""
+  updated_at: ""
+  working_directory: ""
+
+pipeline:
+  current_phase: "requirement"
+  completed_phases: []
+  # 可选值: requirement, data_forensics, data_profiling,
+  #         research_design, statistical_analysis, academic_figures,
+  #         literature_review, manuscript_draft, quality_review,
+  #         submission_package
+
+phases:
+  requirement:
+    status: "pending"
+    agent: "Priya"
+    started_at: null
+    completed_at: null
+    outputs: []
+
+  data_forensics:
+    status: "pending"
+    agent: "Ming"
+    started_at: null
+    completed_at: null
+    gate_result: null  # GREEN / YELLOW / RED
+    outputs: []
+
+  data_profiling:
+    status: "pending"
+    agent: "Ming"
+    started_at: null
+    completed_at: null
+    outputs: []
+
+  research_design:
+    status: "pending"
+    agents: ["Priya", "Kenji"]
+    started_at: null
+    completed_at: null
+    outputs: []
+
+  statistical_analysis:
+    status: "pending"
+    agent: "Kenji"
+    started_at: null
+    completed_at: null
+    outputs: []
+
+  academic_figures:
+    status: "pending"
+    agent: "Lena"
+    started_at: null
+    completed_at: null
+    figure_count: 0
+    table_count: 0
+    outputs: []
+
+  literature_review:
+    status: "pending"
+    agent: "Jing"
+    started_at: null
+    completed_at: null
+    reference_count: 0
+    verified_count: 0
+    outputs: []
+
+  manuscript_draft:
+    status: "pending"
+    agent: "Hao"
+    started_at: null
+    completed_at: null
+    word_count: 0
+    outputs: []
+
+  quality_review:
+    status: "pending"
+    agent: "Alex"
+    started_at: null
+    completed_at: null
+    outputs: []
+
+  submission_package:
+    status: "pending"
+    agent: "Wei"
+    started_at: null
+    completed_at: null
+    outputs: []
+
+gates:
+  data_forensics: null   # GREEN / YELLOW / RED
+  quality_score: null     # 0-100
+  quality_grade: null     # A / B / C / D
+
+iteration:
+  review_round: 0
+  max_rounds: 3
+  history:
+    # - round: 1
+    #   score: 72
+    #   grade: "C"
+    #   issues: ["数字溯源不完整", "引用未验证"]
+    #   resolved: false
+
+status: "pending"
+# pending / in_progress / completed / blocked / failed
+
+blocked_reason: null
+# 人工干预时填写阻塞原因
+
+notes: []
+# 任意备注
