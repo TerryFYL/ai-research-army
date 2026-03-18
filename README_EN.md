@@ -227,8 +227,6 @@ Adapt to other fields by replacing:
 
 **Prerequisites?** Command line + Claude Code + basic research literacy (p-values, confidence intervals).
 
-**Cost per paper?** 200K-500K tokens. ~$3-$8 with Opus end-to-end.
-
 **Works for non-medical fields?** Yes, but you'll need to adapt agents and checklists. See "Customization."
 
 ---
