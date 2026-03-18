@@ -91,7 +91,7 @@ EG → 状态抑郁 → 特质抑郁（完全中介）vs EG → 特质抑郁 →
 ### 1. 克隆仓库 | Clone
 
 ```bash
-git clone https://github.com/your-org/ai-research-army.git
+git clone https://github.com/TerryFYL/ai-research-army.git
 cd ai-research-army
 ```
 
