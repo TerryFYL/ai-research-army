@@ -19,31 +19,31 @@
 
 ## 真实效果
 
-以下图表由 AI 科研军团从一份 **130 人 × 265 变量** 的临床数据集自主生成，全程无人工干预：
+以下图表由 AI 科研军团自主生成（基于模拟的 NSCLC 化疗反应数据集，N=186），展示全流程产出质量：
 
-### 组间效应量森林图
+### 生物标志物组间效应量森林图
 
-17 个情绪粒度指标的 MDD vs HC 差异，按效应量排序，FDR 校正后显著：
+12 个炎症/营养标志物在化疗应答者 vs 非应答者间的差异，按效应量排序，FDR 校正：
 
 ![Forest Plot](docs/showcase/fig1_forest_plot.png)
 
-### 状态-特质分离热图
+### 标志物-结局相关性热图
 
-哪些情绪粒度维度预测状态抑郁（S-DEP）vs 特质抑郁（T-DEP），分离模式一目了然：
+8 个生物标志物 × 4 个临床结局的 Spearman 相关矩阵：
 
-![State-Trait Heatmap](docs/showcase/fig2_state_trait_heatmap.png)
+![Correlation Heatmap](docs/showcase/fig2_correlation_heatmap.png)
 
-### 中介路径分析
+### Kaplan-Meier 生存曲线
 
-EG → 状态抑郁 → 特质抑郁（完全中介）vs EG → 特质抑郁 → 状态抑郁（部分中介），不对称模式揭示作用方向：
+高 NLR vs 低 NLR 的无进展生存期对比（含风险表和 Log-rank 检验）：
 
-![Mediation Paths](docs/showcase/fig4_mediation_paths.png)
+![Survival Curves](docs/showcase/fig3_survival_curves.png)
 
-### ROC 诊断效能曲线
+### ROC 预测效能曲线
 
-情绪粒度指标对 MDD 的分类能力（AUC 0.67-0.71），含临床量表基准对比：
+单标志物及联合模型对化疗应答的预测效能（AUC 0.76-0.96）：
 
-![ROC Curves](docs/showcase/fig5_roc_curves.png)
+![ROC Curves](docs/showcase/fig4_roc_curves.png)
 
 ### 完整交付物清单
 

@@ -19,31 +19,31 @@
 
 ## Real Output
 
-The following figures were autonomously generated from a **130-participant x 265-variable** clinical dataset, with zero human intervention:
+The following figures were autonomously generated from a simulated NSCLC chemotherapy response dataset (N=186), demonstrating pipeline output quality:
 
-### Forest Plot of Group Differences
+### Biomarker Forest Plot
 
-17 emotional granularity indices showing MDD vs HC differences, sorted by effect size, FDR-corrected:
+12 inflammatory/nutritional biomarkers compared between chemotherapy responders vs non-responders, sorted by effect size, FDR-corrected:
 
 ![Forest Plot](docs/showcase/fig1_forest_plot.png)
 
-### State-Trait Dissociation Heatmap
+### Biomarker-Outcome Correlation Heatmap
 
-Which EG dimensions predict state depression (S-DEP) vs trait depression (T-DEP) — dissociation pattern at a glance:
+Spearman correlation matrix: 8 biomarkers x 4 clinical outcomes:
 
-![State-Trait Heatmap](docs/showcase/fig2_state_trait_heatmap.png)
+![Correlation Heatmap](docs/showcase/fig2_correlation_heatmap.png)
 
-### Mediation Path Analysis
+### Kaplan-Meier Survival Curves
 
-Asymmetric mediation: EG -> S-DEP -> T-DEP (full mediation) vs EG -> T-DEP -> S-DEP (partial mediation), revealing directional mechanisms:
+Progression-free survival by NLR status (High vs Low), with number-at-risk table and log-rank test:
 
-![Mediation Paths](docs/showcase/fig4_mediation_paths.png)
+![Survival Curves](docs/showcase/fig3_survival_curves.png)
 
-### ROC Curves
+### ROC Prediction Curves
 
-EG indices for MDD classification (AUC 0.67-0.71), with clinical scale benchmarks:
+Individual biomarkers and combined model for predicting chemotherapy response (AUC 0.76-0.96):
 
-![ROC Curves](docs/showcase/fig5_roc_curves.png)
+![ROC Curves](docs/showcase/fig4_roc_curves.png)
 
 ### Full Deliverables
 
