@@ -9,6 +9,7 @@ Automate the 80% of research that's mechanical. Focus on what only you can do: a
 [![Stars](https://img.shields.io/github/stars/TerryFYL/ai-research-army?style=social)](https://github.com/TerryFYL/ai-research-army/stargazers)
 [![License](https://img.shields.io/badge/License-Apache_2.0-blue.svg)](LICENSE)
 [![Claude Code](https://img.shields.io/badge/Claude_Code-Skills-blueviolet)](https://docs.anthropic.com/en/docs/claude-code)
+[![Multi-CLI](https://img.shields.io/badge/CLI_Engines-8_supported-orange)]()
 [![Dependencies](https://img.shields.io/badge/dependencies-zero-brightgreen)]()
 
 [中文](README.md) | English
@@ -81,6 +82,7 @@ Open Claude Code:
 | **Data traceability** | Not traceable | Every figure, every number traceable to source |
 | **Reporting compliance** | None | STROBE / CONSORT checklists |
 | **Resume capability** | Start over | Resume from any stage |
+| **Execution engine** | Locked to one CLI | 8 CLI engines, hot-swappable |
 
 ---
 
@@ -199,6 +201,49 @@ See "Customization" below.
 
 ---
 
+## Multi-Engine Adaptation
+
+Not locked to a single CLI. Each agent can run on the engine best suited to its role, leveraging differentiated model capabilities:
+
+| Engine | Command | Default Agents | Differentiated Strength |
+|------|------|---------|-----------|
+| **Claude Code** | `claude` | Wei, Kenji, Ming, Hao | Deep reasoning, code generation, MCP ecosystem |
+| **Codex CLI** | `codex` | Alex | Code review, method auditing, sandboxed execution |
+| **Gemini CLI** | `gemini` | Lena, Jing | Multimodal image review, 1M token long context |
+| **OpenCode** | `opencode` | Flexible | Multi-model backend switching, server mode |
+| **Cursor Agent** | `cursor` | Flexible | IDE-level code understanding, full project indexing |
+| **Cline** | `cline` | Flexible | Multi-provider support, plan mode |
+| **Amp** | `amp` | Flexible | Sourcegraph code search augmentation |
+| **Aider** | `aider` | Flexible | Git-native diff editing, multi-model |
+
+**Why multi-engine?**
+
+> When the same model writes and reviews, blind spots are shared. Having GPT-5 review Claude's manuscript and Gemini review GPT's figures — different models have different cognitive blind spots, so cross-model review catches more issues.
+
+Configuration:
+
+```bash
+# Map agents to CLI engines in agents/registry.yaml
+agents:
+  alex:
+    cli_tool: codex      # Alex reviews with Codex
+  lena:
+    cli_tool: gemini     # Lena uses Gemini for figures
+
+# tmux-runner: launch with mapped engine
+tmux-runner.sh review codex ~/ai-research-army task.txt
+
+# parallel-army: global engine override
+ARMY_CLI=gemini ./parallel-army.sh --all
+
+# autoloop: 4th parameter selects engine
+autoloop.sh ~/task-dir 20 10 codex
+```
+
+> **Claude Code alone works perfectly.** Multi-engine is an advanced option for teams seeking cognitive diversity and cross-model validation.
+
+---
+
 ## Customization
 
 Edit `agents/*.md` to customize any role. Add `skills/your-skill/SKILL.md` and run `bash install.sh`.
@@ -230,7 +275,8 @@ No. It automates mechanical steps: data processing, statistical analysis, format
 
 ## Acknowledgments
 
-- [Claude Code](https://docs.anthropic.com/en/docs/claude-code) — execution engine
+- [Claude Code](https://docs.anthropic.com/en/docs/claude-code) — primary execution engine
+- [Codex CLI](https://github.com/openai/codex) · [Gemini CLI](https://github.com/google-gemini/gemini-cli) · [OpenCode](https://opencode.ai) · [Cursor](https://cursor.com) · [Cline](https://cline.bot) · [Amp](https://ampcode.com) · [Aider](https://aider.chat) — supported execution engines
 - [NHANES](https://www.cdc.gov/nchs/nhanes/index.htm) — example data source
 
 ## Contributing

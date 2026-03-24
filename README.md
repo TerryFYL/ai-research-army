@@ -9,6 +9,7 @@
 [![Stars](https://img.shields.io/github/stars/TerryFYL/ai-research-army?style=social)](https://github.com/TerryFYL/ai-research-army/stargazers)
 [![License](https://img.shields.io/badge/License-Apache_2.0-blue.svg)](LICENSE)
 [![Claude Code](https://img.shields.io/badge/Claude_Code-Skills-blueviolet)](https://docs.anthropic.com/en/docs/claude-code)
+[![Multi-CLI](https://img.shields.io/badge/CLI_Engines-8_supported-orange)]()
 [![Dependencies](https://img.shields.io/badge/dependencies-zero-brightgreen)]()
 
 中文 | [English](README_EN.md)
@@ -81,6 +82,7 @@ cd ai-research-army && bash install.sh
 | **数据溯源** | 不可追溯 | 每张图、每个数字可追溯到源表 |
 | **报告合规** | 无 | STROBE / CONSORT 检查清单 |
 | **断点恢复** | 从头开始 | 任意阶段可断点续跑 |
+| **执行引擎** | 锁定单一 CLI | 8 种 CLI 引擎热切换 |
 
 ---
 
@@ -199,6 +201,49 @@ cd ai-research-army && bash install.sh
 
 ---
 
+## 多引擎适配
+
+不锁定单一 CLI。每位 Agent 可运行在最适合的执行引擎上，利用不同模型的差异化能力：
+
+| 引擎 | 命令 | 适配角色 | 差异化优势 |
+|------|------|---------|-----------|
+| **Claude Code** | `claude` | Wei, Kenji, Ming, Hao | 深度推理、代码生成、MCP 生态 |
+| **Codex CLI** | `codex` | Alex | 代码审查、方法审计、沙箱执行 |
+| **Gemini CLI** | `gemini` | Lena, Jing | 多模态审图、100 万 token 长上下文 |
+| **OpenCode** | `opencode` | 灵活分配 | 多模型后端切换、服务器模式 |
+| **Cursor Agent** | `cursor` | 灵活分配 | IDE 级代码理解、全项目索引 |
+| **Cline** | `cline` | 灵活分配 | 多 provider 支持、计划模式 |
+| **Amp** | `amp` | 灵活分配 | Sourcegraph 代码搜索增强 |
+| **Aider** | `aider` | 灵活分配 | Git 原生 diff 编辑、多模型 |
+
+**为什么需要多引擎？**
+
+> 同一模型既当选手又当裁判，盲区一致。让 GPT-5 审 Claude 写的稿、Gemini 审 GPT 画的图——不同模型的认知盲区不同，交叉审查发现的问题更多。
+
+切换方式：
+
+```bash
+# 在 agents/registry.yaml 中配置 Agent → CLI 映射
+agents:
+  alex:
+    cli_tool: codex      # Alex 用 Codex 审稿
+  lena:
+    cli_tool: gemini     # Lena 用 Gemini 审图
+
+# tmux-runner: 按映射启动
+tmux-runner.sh review codex ~/ai-research-army task.txt
+
+# parallel-army: 环境变量全局切换
+ARMY_CLI=gemini ./parallel-army.sh --all
+
+# autoloop: 第 4 参数指定引擎
+autoloop.sh ~/task-dir 20 10 codex
+```
+
+> **默认全部用 Claude Code 即可正常运行。** 多引擎是进阶选项，适合追求认知多样性和交叉验证的场景。
+
+---
+
 ## 自定义
 
 修改 `agents/*.md` 自定义角色，添加 `skills/your-skill/SKILL.md` 后运行 `bash install.sh`。
@@ -230,7 +275,8 @@ cd ai-research-army && bash install.sh
 
 ## 致谢
 
-- [Claude Code](https://docs.anthropic.com/en/docs/claude-code) — 执行引擎
+- [Claude Code](https://docs.anthropic.com/en/docs/claude-code) — 主执行引擎
+- [Codex CLI](https://github.com/openai/codex) · [Gemini CLI](https://github.com/google-gemini/gemini-cli) · [OpenCode](https://opencode.ai) · [Cursor](https://cursor.com) · [Cline](https://cline.bot) · [Amp](https://ampcode.com) · [Aider](https://aider.chat) — 可选执行引擎
 - [NHANES](https://www.cdc.gov/nchs/nhanes/index.htm) — 示例数据源
 
 ## 贡献
