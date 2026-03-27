@@ -18,6 +18,23 @@
 
 ---
 
+## 30 秒看效果
+
+以下图表由 AI Research Army 生成（示例数据）：
+
+<table>
+<tr>
+<td width="50%"><img src="docs/showcase/fig1_forest_plot.png" alt="Forest Plot"/><br/><sub>效应量森林图</sub></td>
+<td width="50%"><img src="docs/showcase/fig2_correlation_heatmap.png" alt="Heatmap"/><br/><sub>相关性热图</sub></td>
+</tr>
+<tr>
+<td width="50%"><img src="docs/showcase/fig3_survival_curves.png" alt="KM Curves"/><br/><sub>Kaplan-Meier 生存曲线</sub></td>
+<td width="50%"><img src="docs/showcase/fig4_roc_curves.png" alt="ROC"/><br/><sub>ROC 曲线</sub></td>
+</tr>
+</table>
+
+---
+
 ## 这套产品的价值
 
 如果你是医学生、医生或医学科研工作者，这个项目的价值不是“帮你生成几段文字”，而是把一整条科研流水线标准化：
@@ -82,23 +99,6 @@ AI Research Army 自动化的是这条机械链路，而不是替你做学术判
 - 商业运营自动循环、获客 SOP、收款流程
 
 换句话说：**开源的是“军团引擎内核”，不是“整套商业后台”。**
-
----
-
-## 30 秒看效果
-
-以下图表由 AI Research Army 生成（示例数据）：
-
-<table>
-<tr>
-<td width="50%"><img src="docs/showcase/fig1_forest_plot.png" alt="Forest Plot"/><br/><sub>效应量森林图</sub></td>
-<td width="50%"><img src="docs/showcase/fig2_correlation_heatmap.png" alt="Heatmap"/><br/><sub>相关性热图</sub></td>
-</tr>
-<tr>
-<td width="50%"><img src="docs/showcase/fig3_survival_curves.png" alt="KM Curves"/><br/><sub>Kaplan-Meier 生存曲线</sub></td>
-<td width="50%"><img src="docs/showcase/fig4_roc_curves.png" alt="ROC"/><br/><sub>ROC 曲线</sub></td>
-</tr>
-</table>
 
 ---
 
