@@ -162,6 +162,8 @@ Review this manuscript with emphasis on statistics and references.
 
 The public edition is not just “a few skills.” It is a three-layer system:
 
+![AI Research Army Public Core Architecture](docs/architecture/public-core-architecture.png)
+
 ### 1. Role Layer
 
 9 agents own distinct responsibilities:
@@ -215,6 +217,14 @@ requirement_v1.md
 ```
 
 These three layers together define the public-core architecture of AI Research Army.
+
+---
+
+## How One Task Flows
+
+This diagram shows how a plain-language research request moves through the public-core pipeline from orchestration to final delivery.
+
+![AI Research Army Task Flow](docs/architecture/task-flow.png)
 
 ---
 

@@ -168,6 +168,8 @@ bash install.sh
 
 公开版不是“几个 skill 的集合”，而是一个三层架构：
 
+![AI Research Army Public Core Architecture](docs/architecture/public-core-architecture.png)
+
 ### 1. 角色层
 
 9 个 Agent 负责不同职责：
@@ -221,6 +223,14 @@ requirement_v1.md
 ```
 
 这三层合起来，才是 AI Research Army 的“公开完整版内核”。
+
+---
+
+## 一个任务如何流转
+
+下面这张图展示的是：用户用自然语言启动一个任务后，军团如何沿着固定门控一路推进到最终交付。
+
+![AI Research Army Task Flow](docs/architecture/task-flow.png)
 
 ---
 
