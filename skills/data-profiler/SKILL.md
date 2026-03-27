@@ -1,6 +1,6 @@
 ---
 name: data-profiler
-description: "数据探查与画像。30分钟生成完整数据画像，包括变量字典、分布、缺失率。触发词：'数据探查'、'data profile'、'数据画像'。"
+description: "数据探查与画像。30分钟生成完整数据画像，包括变量字典、分布、缺失率。既支持 /data-profiler，也支持自然语言触发，如‘先帮我看看这份数据长什么样’。"
 argument-hint: [数据文件路径]
 allowed-tools: Bash(*), Read, Write, Edit, Grep, Glob, WebSearch, WebFetch, Agent
 ---

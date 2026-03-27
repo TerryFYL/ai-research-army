@@ -1,6 +1,6 @@
 ---
 name: delivery
-description: "最终交付收口。把投稿包整理成可交付目录，补齐说明文件、清单和接收指引。"
+description: "最终交付收口。把投稿包整理成可交付目录，补齐说明文件、清单和接收指引。既支持 /delivery，也支持自然语言触发，如‘把这些整理成最终交付目录’。"
 argument-hint: [submission_package目录]
 allowed-tools: Bash(*), Read, Write, Edit, Grep, Glob
 ---

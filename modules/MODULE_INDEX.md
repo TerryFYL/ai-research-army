@@ -87,7 +87,7 @@ intake
 
 ### 11. delivery
 
-- 角色：Tom
+- 角色：Wei
 - 输入：投稿包
 - 输出：`delivery/`（含交付说明、清单、最终打包结果）
 

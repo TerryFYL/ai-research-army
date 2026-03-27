@@ -1,6 +1,6 @@
 ---
 name: quality-review
-description: "质量审查与自动迭代。多轮审查直到通过或达到上限。触发词：'质量审查'、'审稿'、'quality review'、'QA'。"
+description: "质量审查与自动迭代。多轮审查直到通过或达到上限。既支持 /quality-review，也支持自然语言触发，如‘帮我审这篇稿子’。"
 argument-hint: [manuscript文件路径]
 allowed-tools: Bash(*), Read, Write, Edit, Grep, Glob, WebSearch, WebFetch, Agent
 ---

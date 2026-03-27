@@ -106,7 +106,7 @@ phases:
 
   delivery:
     status: "pending"
-    agent: "Tom"
+    agent: "Wei"
     started_at: null
     completed_at: null
     outputs: []

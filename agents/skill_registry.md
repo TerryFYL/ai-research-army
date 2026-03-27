@@ -22,7 +22,7 @@
 | manuscript-draft | Hao | `/manuscript-draft` | `manuscript.md` |
 | quality-review | Alex | `/quality-review` | `quality_report.md` |
 | submit-package | Hao + Alex | `/submit-package` | `submission_package/` |
-| delivery | Tom + Wei | `/delivery` | `delivery/` |
+| delivery | Wei | `/delivery` | `delivery/` |
 
 ## 调度顺序
 

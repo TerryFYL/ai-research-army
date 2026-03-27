@@ -21,8 +21,6 @@
   alex.md       # 审查官
   jing.md       # 文献研究员
   devil.md      # 红队挑战者
-  sarah.md      # 内容运营
-  tom.md        # 运营经理
 ```
 
 ## 角色定义模板

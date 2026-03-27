@@ -1,6 +1,6 @@
 ---
 name: research-design
-description: "研究设计与方案规划。从数据字典出发，设计研究问题、分析策略和叙事线。触发词：'研究设计'、'research design'、'设计研究方案'。"
+description: "研究设计与方案规划。从数据字典出发，设计研究问题、分析策略和叙事线。既支持 /research-design，也支持自然语言触发，如‘帮我设计研究方案’。"
 argument-hint: [研究方向或数据描述]
 allowed-tools: Bash(*), Read, Write, Edit, Grep, Glob, WebSearch, WebFetch, Agent
 ---

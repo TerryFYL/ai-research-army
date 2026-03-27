@@ -1,6 +1,6 @@
 ---
 name: stat-analysis
-description: "统计分析执行。基于研究设计执行完整统计分析流程。触发词：'统计分析'、'跑统计'、'statistical analysis'。"
+description: "统计分析执行。基于研究设计执行完整统计分析流程。既支持 /stat-analysis，也支持自然语言触发，如‘帮我跑统计分析’。"
 argument-hint: [分析计划或研究设计文件]
 allowed-tools: Bash(*), Read, Write, Edit, Grep, Glob, WebSearch, WebFetch, Agent
 ---

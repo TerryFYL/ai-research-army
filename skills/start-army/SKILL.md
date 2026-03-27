@@ -1,6 +1,6 @@
 ---
 name: start-army
-description: "AI科研军团公开完整版全流程入口。触发词：'启动军团'、'全流程'、'start army'。"
+description: "AI科研军团公开完整版全流程入口。既支持 /start-army，也支持自然语言触发，例如‘帮我从数据探查一路推进到初稿和交付’。"
 argument-hint: [研究需求描述]
 allowed-tools: Bash(*), Read, Write, Edit, Grep, Glob, WebSearch, WebFetch, Agent
 ---
@@ -10,6 +10,12 @@ allowed-tools: Bash(*), Read, Write, Edit, Grep, Glob, WebSearch, WebFetch, Agen
 ## 概述
 
 这是公开版的中枢调度 Skill。它把公开仓库里的模块顺序、角色定义和质量门控串成一条完整 pipeline。
+
+自然语言路由示例：
+
+- “我有一份临床数据，帮我从数据探查做到初稿”
+- “帮我完整推进这个研究任务，不要一步步问我”
+- “从研究设计、统计分析到交付目录都做完”
 
 启动前先读取：
 

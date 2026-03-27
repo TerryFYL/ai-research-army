@@ -2,7 +2,7 @@
 
 # AI Research Army
 
-**One command turns the most time-consuming parts of medical research into a reusable 11-agent workflow.**
+**One command turns the most time-consuming parts of medical research into a reusable 9-agent workflow.**
 
 From requirement crystallization and data profiling to statistics, figures, literature, drafting, submission packaging, and final delivery, this is a research pipeline core rather than a prompt bundle.
 
@@ -67,7 +67,7 @@ This is no longer the earlier lightweight demo.
 
 This repository is now the **public core** of AI Research Army, including:
 
-- 11 agent role definitions
+- 9 agent role definitions
 - full module ordering and hard constraints
 - `/start-army` orchestration entry
 - standalone skills
@@ -116,6 +116,12 @@ Open Claude Code:
 /start-army "Investigate the association between sedentary behavior and cardiovascular risk in NHANES 2017-2020"
 ```
 
+In practice, the more natural way to use it is plain language:
+
+```text
+I have an NHANES dataset and want to study sedentary behavior and cardiovascular risk. Take it from data profiling and research design through statistics, drafting, and final delivery.
+```
+
 Or call modules directly:
 
 ```text
@@ -126,6 +132,14 @@ Or call modules directly:
 /journal match
 /quality-review
 /delivery
+```
+
+Single-module work can also be triggered in plain language, for example:
+
+```text
+Profile this dataset and give me a full data picture first.
+Design the study plan with clinical significance and statistical feasibility in mind.
+Review this manuscript with emphasis on statistics and references.
 ```
 
 ---
@@ -166,7 +180,7 @@ See:
 ## Repository Layout
 
 ```text
-agents/        11 role definitions
+agents/        9 role definitions
 skills/        orchestration and module skills
 modules/       pipeline definitions and constraints
 system/        capability registry
@@ -193,8 +207,6 @@ TEAM.md        team and handoff overview
 | Hao | Academic writing |
 | Alex | Quality review |
 | Devil | Red-team challenge |
-| Sarah | Public communication |
-| Tom | Delivery and scope management |
 
 ---
 
@@ -214,6 +226,8 @@ TEAM.md        team and handoff overview
 | Quality review | `/quality-review` |
 | Submission package | `/submit-package` |
 | Delivery | `/delivery` |
+
+> The table above shows explicit command entry points. In normal use, plain-language task descriptions are preferred.
 
 ---
 

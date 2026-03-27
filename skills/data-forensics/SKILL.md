@@ -1,6 +1,6 @@
 ---
 name: data-forensics
-description: "原始数据真伪与异常模式扫描。触发词：'数据鉴伪'、'data forensics'、'这份数据可信吗'。"
+description: "原始数据真伪与异常模式扫描。既支持 /data-forensics，也支持自然语言触发，如‘这份数据可信吗’。"
 argument-hint: [数据文件路径]
 allowed-tools: Bash(*), Read, Write, Edit, Grep, Glob
 ---

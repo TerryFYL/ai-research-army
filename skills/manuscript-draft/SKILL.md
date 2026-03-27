@@ -1,6 +1,6 @@
 ---
 name: manuscript-draft
-description: "学术论文撰写。基于统计结果和文献生成IMRAD格式论文。触发词：'写论文'、'撰稿'、'manuscript draft'。"
+description: "学术论文撰写。基于统计结果和文献生成IMRAD格式论文。既支持 /manuscript-draft，也支持自然语言触发，如‘帮我写成论文初稿’。"
 argument-hint: [分析结果和文献文件]
 allowed-tools: Bash(*), Read, Write, Edit, Grep, Glob, WebSearch, WebFetch, Agent
 ---
