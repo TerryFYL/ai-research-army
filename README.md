@@ -24,7 +24,7 @@
 
 - 少走弯路：先锁需求、再摸数据、再定方案，不再一上来就盲跑
 - 少返工：图表、正文、引用和统计结果按同一套产物契约接力
-- 少碎片化：不是十几个 prompt 东拼西凑，而是 11 个角色分工协作
+- 少碎片化：不是十几个 prompt 东拼西凑，而是 9 个角色分工协作
 - 更可复制：你能把这套流程嵌入自己的课题组、实验室或个人科研流程
 
 ---
@@ -161,6 +161,66 @@ bash install.sh
 | **报告合规** | 无 | STROBE / CONSORT 等检查 |
 | **断点恢复** | 弱 | 可按阶段恢复 |
 | **执行引擎** | 单一 | 多 CLI 适配 |
+
+---
+
+## 架构总览
+
+公开版不是“几个 skill 的集合”，而是一个三层架构：
+
+### 1. 角色层
+
+9 个 Agent 负责不同职责：
+
+`Wei → Priya → Ming → Kenji → Lena / Jing → Hao → Alex → Devil`
+
+- `Wei`：编排与节奏控制
+- `Priya`：需求结晶与研究设计
+- `Ming`：数据画像与鉴伪
+- `Kenji`：统计分析
+- `Lena`：图表与可视化
+- `Jing`：文献与引用验证
+- `Hao`：论文初稿
+- `Alex`：质量门控
+- `Devil`：关键节点红队挑战
+
+### 2. 模块层
+
+模块顺序是硬约束，不是建议顺序：
+
+```text
+intake
+  → data-explore
+  → data-forensics
+  → research-design
+  → statistics
+  → figures
+  → literature
+  → manuscript
+  → review
+  → submission
+  → delivery
+```
+
+### 3. 产物层
+
+每一层都必须留下明确产物，作为下游输入：
+
+```text
+requirement_v1.md
+  → data_dictionary.md / data_profile_report.md
+  → forensics_report.md
+  → research_plan.md
+  → analysis_results.md
+  → figures/
+  → verified_ref_pool.md
+  → manuscript.md
+  → quality_report.md
+  → submission_package/
+  → delivery/
+```
+
+这三层合起来，才是 AI Research Army 的“公开完整版内核”。
 
 ---
 

@@ -158,6 +158,66 @@ Review this manuscript with emphasis on statistics and references.
 
 ---
 
+## Architecture Overview
+
+The public edition is not just “a few skills.” It is a three-layer system:
+
+### 1. Role Layer
+
+9 agents own distinct responsibilities:
+
+`Wei → Priya → Ming → Kenji → Lena / Jing → Hao → Alex → Devil`
+
+- `Wei`: orchestration
+- `Priya`: requirement crystallization and research design
+- `Ming`: data profiling and forensics
+- `Kenji`: statistics
+- `Lena`: figures and visualization
+- `Jing`: literature and citation verification
+- `Hao`: manuscript drafting
+- `Alex`: quality gate
+- `Devil`: red-team challenge at key checkpoints
+
+### 2. Module Layer
+
+The pipeline order is a hard constraint, not a loose suggestion:
+
+```text
+intake
+  → data-explore
+  → data-forensics
+  → research-design
+  → statistics
+  → figures
+  → literature
+  → manuscript
+  → review
+  → submission
+  → delivery
+```
+
+### 3. Artifact Layer
+
+Each stage must leave explicit artifacts for the next stage:
+
+```text
+requirement_v1.md
+  → data_dictionary.md / data_profile_report.md
+  → forensics_report.md
+  → research_plan.md
+  → analysis_results.md
+  → figures/
+  → verified_ref_pool.md
+  → manuscript.md
+  → quality_report.md
+  → submission_package/
+  → delivery/
+```
+
+These three layers together define the public-core architecture of AI Research Army.
+
+---
+
 ## Public-Core Pipeline
 
 `intake → data-explore → data-forensics → research-design → statistics → figures → literature → manuscript → review → submission → delivery`
