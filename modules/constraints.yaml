@@ -1,0 +1,64 @@
+# AI 科研军团 · 公开版硬约束
+
+ordering:
+  - id: O1
+    rule: "data-explore 必须在 research-design、statistics 之前完成"
+    reason: "没有数据字典，后续判断容易盲猜变量"
+
+  - id: O2
+    rule: "原始数据项目的 data-forensics 必须在 statistics 之前完成"
+    reason: "先验真，再分析"
+
+  - id: O3
+    rule: "research-design 必须产出 research_plan.md 后才可进入 statistics"
+    reason: "先锁定问题链，再跑统计"
+
+  - id: O4
+    rule: "statistics 必须在 figures、literature、manuscript 之前完成"
+    reason: "图表、文献重点与写稿都依赖已确认结果"
+
+  - id: O5
+    rule: "review 必须在 submission 和 delivery 之前完成"
+    reason: "审查是阻塞门控，不是装饰步骤"
+
+  - id: O6
+    rule: "submission 必须先产出 submission_package/，然后才能进入 delivery"
+    reason: "投稿包是交付目录的上游输入"
+
+  - id: O7
+    rule: "delivery 的终态是 delivery/ 目录，而不是单个 manuscript.md 或 submission_package/"
+    reason: "最终对外输出需要可交付、可解释、可接收的目录结构"
+
+mandatory:
+  - id: M1
+    rule: "每个项目都必须生成 requirement_v1.md"
+  - id: M2
+    rule: "每个项目都必须生成 data_dictionary.md"
+  - id: M3
+    rule: "每个项目都必须经过 quality-review"
+  - id: M4
+    rule: "引用进入最终稿前必须显式验证"
+
+quality:
+  - id: Q1
+    rule: "每个关键数字必须可追溯到统计结果或源表"
+  - id: Q2
+    rule: "不编造数据、不编造引用、不 P-hacking"
+  - id: Q3
+    rule: "图表与正文数字必须一致"
+  - id: Q4
+    rule: "Alex 审查失败的 BLOCK 项必须修复后再继续"
+
+iteration:
+  - id: I1
+    rule: "Alex 审查后的自动修复循环最多 3 轮"
+  - id: I2
+    rule: "需求变更时新建 requirement_v2.md，不覆盖旧版本"
+  - id: I3
+    rule: "每完成一个模块，更新 progress.md 或 state.yaml"
+
+discussion:
+  max_participants: 2
+  must_produce: "decision.md"
+  key_pair: "Priya + Kenji"
+  red_team: "Devil 在关键节点挑战主方案"

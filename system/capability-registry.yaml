@@ -1,0 +1,79 @@
+# AI 科研军团 · 公开版能力注册表
+
+agents:
+  wei:
+    role: "项目编排"
+    capabilities:
+      - "需求驱动编排"
+      - "多 Agent 依赖排序"
+      - "进度与风险控制"
+
+  priya:
+    role: "需求结晶 / 研究设计"
+    capabilities:
+      - "需求访谈与锁定"
+      - "研究问题定义"
+      - "期刊层级建议"
+
+  ming:
+    role: "数据工程"
+    capabilities:
+      - "数据画像"
+      - "清洗与标准化"
+      - "原始数据取证"
+
+  kenji:
+    role: "统计分析"
+    capabilities:
+      - "主分析"
+      - "亚组与敏感性分析"
+      - "统计方法匹配"
+
+  lena:
+    role: "学术可视化"
+    capabilities:
+      - "投稿级图表生成"
+      - "图表对账"
+      - "格式适配"
+
+  jing:
+    role: "文献研究"
+    capabilities:
+      - "检索策略设计"
+      - "文献池构建"
+      - "引用验证"
+
+  hao:
+    role: "学术写作"
+    capabilities:
+      - "IMRAD 初稿"
+      - "叙事整合"
+      - "修稿"
+
+  alex:
+    role: "质量审查"
+    capabilities:
+      - "八层审查"
+      - "学术诚信检查"
+      - "期刊适配审视"
+
+  devil:
+    role: "红队挑战"
+    capabilities:
+      - "替代解释"
+      - "主方案挑战"
+      - "风险升级"
+
+  sarah:
+    role: "内容运营"
+    capabilities:
+      - "公开表达"
+      - "案例包装"
+      - "教程与 FAQ"
+
+  tom:
+    role: "商务运营"
+    capabilities:
+      - "范围定义"
+      - "交付说明"
+      - "报价框架"

@@ -24,8 +24,8 @@ pipeline:
   completed_phases: []
   # 可选值: requirement, data_forensics, data_profiling,
   #         research_design, statistical_analysis, academic_figures,
-  #         literature_review, manuscript_draft, quality_review,
-  #         submission_package
+  #         literature_review, manuscript, quality_review,
+  #         submission, delivery
 
 phases:
   requirement:
@@ -82,7 +82,7 @@ phases:
     verified_count: 0
     outputs: []
 
-  manuscript_draft:
+  manuscript:
     status: "pending"
     agent: "Hao"
     started_at: null
@@ -97,9 +97,16 @@ phases:
     completed_at: null
     outputs: []
 
-  submission_package:
+  submission:
     status: "pending"
     agent: "Wei"
+    started_at: null
+    completed_at: null
+    outputs: []
+
+  delivery:
+    status: "pending"
+    agent: "Tom"
     started_at: null
     completed_at: null
     outputs: []

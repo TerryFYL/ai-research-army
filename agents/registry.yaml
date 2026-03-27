@@ -1,0 +1,66 @@
+# AI 科研军团 · 公开版 Agent 注册表
+
+cli_tools:
+  claude:
+    description: "Claude Code 或兼容 CLI"
+  codex:
+    description: "Codex / GPT 系列编码与审查 CLI"
+  gemini:
+    description: "Gemini CLI 或兼容长上下文/多模态 CLI"
+
+agents:
+  wei:
+    mode: cli
+    preferred_tool: claude
+    soul: "agents/wei.md"
+    role: "项目编排"
+  priya:
+    mode: cli
+    preferred_tool: claude
+    soul: "agents/priya.md"
+    role: "需求结晶 / 研究设计"
+  ming:
+    mode: cli
+    preferred_tool: claude
+    soul: "agents/ming.md"
+    role: "数据工程 / 鉴伪"
+  kenji:
+    mode: cli
+    preferred_tool: claude
+    soul: "agents/kenji.md"
+    role: "统计分析"
+  lena:
+    mode: cli
+    preferred_tool: gemini
+    soul: "agents/lena.md"
+    role: "学术出图"
+  jing:
+    mode: cli
+    preferred_tool: gemini
+    soul: "agents/jing.md"
+    role: "文献研究 / 引用验证"
+  hao:
+    mode: cli
+    preferred_tool: claude
+    soul: "agents/hao.md"
+    role: "学术写作"
+  alex:
+    mode: cli
+    preferred_tool: codex
+    soul: "agents/alex.md"
+    role: "质量审查"
+  devil:
+    mode: cli
+    preferred_tool: gemini
+    soul: "agents/devil.md"
+    role: "红队挑战"
+  sarah:
+    mode: cli
+    preferred_tool: claude
+    soul: "agents/sarah.md"
+    role: "内容运营"
+  tom:
+    mode: cli
+    preferred_tool: claude
+    soul: "agents/tom.md"
+    role: "商务运营"

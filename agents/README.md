@@ -11,7 +11,7 @@
 每位 Agent 一个文件，以名字小写命名：
 
 ```
-agents/
+  agents/
   wei.md        # 团队领航者
   priya.md      # 需求翻译官
   ming.md       # 数据工程师
@@ -20,7 +20,8 @@ agents/
   lena.md       # 可视化设计师
   alex.md       # 审查官
   jing.md       # 文献研究员
-  sarah.md      # 内容获客官
+  devil.md      # 红队挑战者
+  sarah.md      # 内容运营
   tom.md        # 运营经理
 ```
 

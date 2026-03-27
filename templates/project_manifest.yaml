@@ -1,0 +1,36 @@
+# 项目清单模板
+
+project:
+  id: ""
+  title: ""
+  domain: ""
+  status: draft
+  owner: ""
+
+requirement:
+  version: requirement_v1.md
+  locked: false
+  research_question: ""
+  target_journal_tier: ""
+
+data:
+  source: ""
+  format: ""
+  raw_file: ""
+  cleaned_file: ""
+
+pipeline:
+  current_phase: intake
+  completed_steps: []
+  risks: []
+
+outputs:
+  requirement: requirement_v1.md
+  dictionary: data_dictionary.md
+  design: research_plan.md
+  analysis: analysis_results.md
+  literature: verified_ref_pool.md
+  manuscript: manuscript.md
+  quality: quality_report.md
+  package: submission_package/
+  delivery: delivery/

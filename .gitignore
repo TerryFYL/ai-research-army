@@ -17,10 +17,16 @@
 *.hdf5
 
 # ------ 项目产出（每个项目独立管理） ------
-outputs/
-submission_package/
-figures/
-delivery/
+/outputs/
+/submission_package/
+/figures/
+/delivery/
+/clients/
+/projects/
+/reports/
+/reviews/
+/uploads/
+/bench/
 
 # ------ 系统文件 ------
 .DS_Store
@@ -51,6 +57,9 @@ env/
 *.pem
 credentials/
 secrets/
+*.db
+*.sqlite
+*.sqlite3
 
 # ------ IDE ------
 .idea/
@@ -64,6 +73,8 @@ E:/
 # ------ 日志 ------
 *.log
 logs/
+.cron-state/
+.install-manifest
 
 # ------ 临时文件 ------
 tmp/
