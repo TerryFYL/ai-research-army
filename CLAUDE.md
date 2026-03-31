@@ -1,25 +1,79 @@
-# AI 科研军团 · Claude Code 入口
+---
+# 项目元数据
+project_name: "AI科研军团"
+project_type: "其他"
+status: "进行中"
+progress: 0
+created_date: "2026-02-26"
+target_date: "2026-04-30"
+priority: "高"
+tags: ["AI", "科研服务", "商业化", "医学论文"]
 
-你正在执行 AI 科研军团的公开完整版内核。
+# 项目模块
+modules:
+- id: m1_product
+  name: "M1: 产品定义"
+  weight: 15
+  progress: 0
+  status: pending
 
-## 先读文件
+- id: m2_pipeline
+  name: "M2: 技术管线"
+  weight: 20
+  progress: 0
+  status: pending
 
-1. `TEAM.md`
-2. `modules/MODULE_INDEX.md`
-3. `modules/constraints.yaml`
-4. `agents/skill_registry.md`
+- id: m3_acquisition
+  name: "M3: 获客系统"
+  weight: 25
+  progress: 0
+  status: pending
 
-## 默认行为
+- id: m4_first_delivery
+  name: "M4: 首单交付"
+  weight: 25
+  progress: 0
+  status: pending
 
-- 如果用户用自然语言描述完整研究任务，将其路由到 `start-army`
-- 如果用户用自然语言描述单模块任务，路由到对应 skill
-- 斜杠命令只是显式入口，不是唯一入口
-- 阶段间自动推进，除非缺少用户独有信息
+- id: m5_operations
+  name: "M5: 运营基建"
+  weight: 15
+  progress: 0
+  status: pending
+---
 
-## 不可违反
+## 项目概述
 
-- 不跳过 `data-profiler`
-- 原始数据项目不跳过 `data-forensics`
-- 不在无统计结果时写 Results
-- 不在未审查前打包交付
-- 不输出未验证引用作为最终结果
+把已验证的"数据→统计分析→投稿级初稿"AI能力产品化，面向医学研究生、临床医生和PI提供科研论文一站式服务。
+
+## 模块详情
+
+### M1: 产品定义 (15%)
+完成标准: 产品名确定 + 定价公式 + 接单SOP文档
+
+### M2: 技术管线 (20%)
+完成标准: 用曙光心衰数据跑通全自动管线，无需人工断点
+
+### M3: 获客系统 (25%)
+完成标准: 至少1个渠道产生有效咨询
+
+### M4: 首单交付 (25%)
+完成标准: ≥3单交付完成，客户满意度≥4/5
+
+### M5: 运营基建 (15%)
+完成标准: 单均成本清楚 + 定价可持续
+
+## 更新记录
+
+### 2026-02-26 - 项目初始化
+- ✅ 创建军团治理框架（PROMPT.md + TEAM.md）
+- ✅ 定义9个Agent灵魂（agents/souls.md）
+- ✅ 设计4层进化机制（agents/evolution.md）
+- ✅ 纳入pm-tool管理
+
+### 2026-03-01 - 角色重塑
+- ✅ 10人团队重新设计：Wei/Priya/Ming/Kenji/Hao/Lena/Alex/Jing/Sarah/Tom
+- ✅ 每人独立 Soul 文件（agents/<name>.md），真实职业背景设计
+- ✅ 合并 CEO+Elon→Wei, Critic+照微→Alex, Sales+CFO→Tom
+- ✅ 新增 Ming（数据工程）、Lena（可视化）、Jing（文献检索）
+- ✅ 层级架构改为协作流，全项目旧名称清零

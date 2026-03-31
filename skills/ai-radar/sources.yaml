@@ -1,0 +1,779 @@
+# AI 信息雷达 - 信息源配置
+# 版本: 1.1.0
+# 更新时间: 2026-01-30
+# 审计周期: 每季度
+#
+# 更新日志:
+# - v1.3.0: 新增YouTube频道（8个高质量频道，覆盖L4-L5层）
+# - v1.2.0: 新增a16z信息源体系（5个核心渠道，覆盖L3-L5层）
+# - v1.1.0: 新增X平台精选关注（25个高质量账号，按类别组织）
+
+# 信息源质量等级说明:
+# - primary (一手源): 官方发布、原始论文、财报，可信度最高
+# - curated (精选二手源): 顶级分析师、深度媒体，有独立判断
+# - aggregated (聚合源): 新闻聚合、社交媒体，速度快但噪音大
+
+---
+
+# Layer 5: 应用层
+L5_applications:
+  primary:
+    - name: "Product Hunt"
+      url: "https://www.producthunt.com/topics/artificial-intelligence"
+      type: rss_capable
+      check_frequency: daily
+      trust_score: 80
+      notes: "AI 新产品首发地"
+    - name: "GitHub Trending"
+      url: "https://github.com/trending?since=daily"
+      type: web
+      check_frequency: daily
+      trust_score: 85
+      notes: "开源 AI 项目趋势"
+
+  curated:
+    - name: "Ben's Bites"
+      url: "https://bensbites.beehiiv.com/"
+      type: newsletter
+      check_frequency: daily
+      trust_score: 80
+      notes: "AI 产品日报，筛选质量高"
+    - name: "There's An AI For That"
+      url: "https://theresanaiforthat.com/"
+      type: web
+      check_frequency: weekly
+      trust_score: 75
+      notes: "AI 工具数据库"
+
+  aggregated:
+    - name: "X/Twitter AI 圈"
+      url: "https://x.com"
+      type: social
+      check_frequency: daily
+      trust_score: 60
+      keywords: ["AI agent", "Claude Code", "Cursor", "AI coding"]
+      notes: "噪音大，需要筛选"
+
+---
+
+# Layer 4: 大模型层
+L4_models:
+  primary:
+    - name: "Anthropic Blog"
+      url: "https://www.anthropic.com/news"
+      type: rss_capable
+      check_frequency: daily
+      trust_score: 95
+      notes: "Claude 官方发布"
+    - name: "OpenAI Blog"
+      url: "https://openai.com/blog"
+      type: rss_capable
+      check_frequency: daily
+      trust_score: 95
+      notes: "GPT 官方发布"
+    - name: "Google DeepMind Blog"
+      url: "https://deepmind.google/discover/blog/"
+      type: rss_capable
+      check_frequency: weekly
+      trust_score: 95
+      notes: "Gemini 官方发布"
+    - name: "Meta AI Blog"
+      url: "https://ai.meta.com/blog/"
+      type: rss_capable
+      check_frequency: weekly
+      trust_score: 90
+      notes: "Llama 官方发布"
+    - name: "arXiv cs.CL"
+      url: "https://arxiv.org/list/cs.CL/recent"
+      type: rss
+      check_frequency: daily
+      trust_score: 90
+      notes: "NLP/LLM 预印本"
+    - name: "arXiv cs.AI"
+      url: "https://arxiv.org/list/cs.AI/recent"
+      type: rss
+      check_frequency: daily
+      trust_score: 90
+      notes: "AI 预印本"
+
+  curated:
+    - name: "Simon Willison's Blog"
+      url: "https://simonwillison.net/"
+      type: rss
+      check_frequency: daily
+      trust_score: 88
+      notes: "LLM 实践专家，技术深度高"
+    - name: "Latent Space Podcast"
+      url: "https://www.latent.space/"
+      type: podcast
+      check_frequency: weekly
+      trust_score: 85
+      notes: "AI 深度访谈"
+    - name: "The Gradient"
+      url: "https://thegradient.pub/"
+      type: web
+      check_frequency: weekly
+      trust_score: 85
+      notes: "AI 研究深度分析"
+    - name: "Ahead of AI (Sebastian Raschka)"
+      url: "https://magazine.sebastianraschka.com/"
+      type: newsletter
+      check_frequency: weekly
+      trust_score: 85
+      notes: "LLM 技术深度解读"
+
+  aggregated:
+    - name: "Hacker News"
+      url: "https://news.ycombinator.com/"
+      type: web
+      check_frequency: daily
+      trust_score: 70
+      keywords: ["LLM", "GPT", "Claude", "AI"]
+      notes: "技术社区热点"
+    - name: "Reddit r/LocalLLaMA"
+      url: "https://www.reddit.com/r/LocalLLaMA/"
+      type: web
+      check_frequency: daily
+      trust_score: 65
+      notes: "开源 LLM 社区"
+
+---
+
+# Layer 3: 基建层
+L3_infrastructure:
+  primary:
+    - name: "AWS AI Blog"
+      url: "https://aws.amazon.com/blogs/machine-learning/"
+      type: rss
+      check_frequency: weekly
+      trust_score: 90
+      notes: "AWS AI 服务更新"
+    - name: "Google Cloud AI Blog"
+      url: "https://cloud.google.com/blog/products/ai-machine-learning"
+      type: rss
+      check_frequency: weekly
+      trust_score: 90
+      notes: "GCP AI 服务更新"
+    - name: "Azure AI Blog"
+      url: "https://azure.microsoft.com/en-us/blog/tag/ai/"
+      type: rss
+      check_frequency: weekly
+      trust_score: 90
+      notes: "Azure AI 服务更新"
+
+  curated:
+    - name: "The Information"
+      url: "https://www.theinformation.com/"
+      type: paywall
+      check_frequency: weekly
+      trust_score: 88
+      notes: "科技深度报道（付费）"
+    - name: "Stratechery"
+      url: "https://stratechery.com/"
+      type: paywall
+      check_frequency: weekly
+      trust_score: 85
+      notes: "科技战略分析（付费）"
+
+  aggregated:
+    - name: "TechCrunch AI"
+      url: "https://techcrunch.com/category/artificial-intelligence/"
+      type: rss
+      check_frequency: daily
+      trust_score: 70
+      notes: "科技新闻"
+
+---
+
+# Layer 2: 芯片层
+L2_chips:
+  primary:
+    - name: "NVIDIA Blog"
+      url: "https://blogs.nvidia.com/"
+      type: rss
+      check_frequency: weekly
+      trust_score: 90
+      notes: "NVIDIA 官方"
+    - name: "NVIDIA GTC"
+      url: "https://www.nvidia.com/gtc/"
+      type: event
+      check_frequency: quarterly
+      trust_score: 95
+      notes: "NVIDIA 年度大会"
+    - name: "NVIDIA 财报"
+      url: "https://investor.nvidia.com/"
+      type: quarterly
+      check_frequency: quarterly
+      trust_score: 95
+      notes: "供应链和市场数据"
+    - name: "AMD Blog"
+      url: "https://community.amd.com/t5/corporate/ct-p/corporate-blog"
+      type: rss
+      check_frequency: weekly
+      trust_score: 85
+      notes: "AMD 官方"
+
+  curated:
+    - name: "SemiAnalysis"
+      url: "https://www.semianalysis.com/"
+      type: paywall
+      check_frequency: weekly
+      trust_score: 90
+      notes: "半导体深度分析（部分付费）"
+    - name: "Dylan Patel (SemiAnalysis)"
+      url: "https://x.com/dylan522p"
+      type: social
+      check_frequency: daily
+      trust_score: 85
+      notes: "芯片行业内幕"
+    - name: "AnandTech"
+      url: "https://www.anandtech.com/"
+      type: rss
+      check_frequency: weekly
+      trust_score: 80
+      notes: "硬件深度评测"
+
+  aggregated:
+    - name: "Tom's Hardware"
+      url: "https://www.tomshardware.com/"
+      type: rss
+      check_frequency: weekly
+      trust_score: 70
+      notes: "硬件新闻"
+
+---
+
+# Layer 1: 能源层
+L1_energy:
+  primary:
+    - name: "公司可持续发展报告"
+      url: "各公司官网"
+      type: annual
+      check_frequency: yearly
+      trust_score: 85
+      notes: "Google、Microsoft、Amazon 年度报告"
+    - name: "IEA (国际能源署)"
+      url: "https://www.iea.org/"
+      type: report
+      check_frequency: monthly
+      trust_score: 90
+      notes: "能源行业权威数据"
+
+  curated:
+    - name: "Data Center Dynamics"
+      url: "https://www.datacenterdynamics.com/"
+      type: rss
+      check_frequency: weekly
+      trust_score: 80
+      notes: "数据中心行业媒体"
+    - name: "Utility Dive"
+      url: "https://www.utilitydive.com/"
+      type: rss
+      check_frequency: weekly
+      trust_score: 75
+      notes: "能源行业新闻"
+
+  aggregated:
+    - name: "能源行业 X/Twitter"
+      url: "https://x.com"
+      type: social
+      check_frequency: weekly
+      trust_score: 55
+      keywords: ["data center energy", "AI power", "nuclear AI"]
+      notes: "噪音较大"
+
+---
+
+# 中文信息源补充
+chinese_sources:
+  L4_models:
+    - name: "智谱 AI 官方"
+      url: "https://www.zhipuai.cn/"
+      type: web
+      check_frequency: weekly
+      trust_score: 85
+      notes: "GLM 官方"
+    - name: "月之暗面 Kimi"
+      url: "https://www.moonshot.cn/"
+      type: web
+      check_frequency: weekly
+      trust_score: 85
+      notes: "Kimi 官方"
+    - name: "DeepSeek"
+      url: "https://www.deepseek.com/"
+      type: web
+      check_frequency: weekly
+      trust_score: 85
+      notes: "DeepSeek 官方"
+    - name: "机器之心"
+      url: "https://www.jiqizhixin.com/"
+      type: rss
+      check_frequency: daily
+      trust_score: 75
+      notes: "AI 中文媒体"
+    - name: "量子位"
+      url: "https://www.qbitai.com/"
+      type: rss
+      check_frequency: daily
+      trust_score: 70
+      notes: "AI 中文媒体"
+
+---
+
+# X平台精选关注（用户个人策展）
+# 来源: 用户X平台Following列表
+# 更新时间: 2026-01-30
+x_curated_follows:
+
+  # AI公司官方账号 - 一手信息源
+  companies:
+    - handle: "@OpenAI"
+      name: "OpenAI"
+      url: "https://x.com/OpenAI"
+      layer: L4
+      trust_score: 95
+      notes: "GPT系列官方发布"
+
+    - handle: "@AnthropicAI"
+      name: "Anthropic"
+      url: "https://x.com/AnthropicAI"
+      layer: L4
+      trust_score: 95
+      notes: "Claude官方发布"
+
+    - handle: "@GoogleAI"
+      name: "Google AI"
+      url: "https://x.com/GoogleAI"
+      layer: L4
+      trust_score: 90
+      notes: "Google AI官方"
+
+    - handle: "@GoogleDeepMind"
+      name: "Google DeepMind"
+      url: "https://x.com/GoogleDeepMind"
+      layer: L4
+      trust_score: 95
+      notes: "Gemini官方发布"
+
+    - handle: "@AIatMeta"
+      name: "Meta AI"
+      url: "https://x.com/AIatMeta"
+      layer: L4
+      trust_score: 90
+      notes: "Llama官方发布"
+
+    - handle: "@huggingface"
+      name: "Hugging Face"
+      url: "https://x.com/huggingface"
+      layer: L4
+      trust_score: 88
+      notes: "开源AI社区核心"
+
+    - handle: "@DeepLearningAI"
+      name: "DeepLearning.AI"
+      url: "https://x.com/DeepLearningAI"
+      layer: L4
+      trust_score: 85
+      notes: "吴恩达AI教育平台"
+
+    - handle: "@runwayml"
+      name: "Runway"
+      url: "https://x.com/runwayml"
+      layer: L5
+      trust_score: 85
+      notes: "AI视频生成领先者"
+
+    - handle: "@cognition_labs"
+      name: "Cognition (Devin)"
+      url: "https://x.com/cognition_labs"
+      layer: L5
+      trust_score: 85
+      notes: "AI编程Agent Devin"
+
+  # AI领域领袖/高管 - 战略洞察
+  leaders:
+    - handle: "@sama"
+      name: "Sam Altman"
+      url: "https://x.com/sama"
+      role: "OpenAI CEO"
+      layer: L4
+      trust_score: 90
+      notes: "AI行业风向标"
+
+    - handle: "@gdb"
+      name: "Greg Brockman"
+      url: "https://x.com/gdb"
+      role: "OpenAI联合创始人"
+      layer: L4
+      trust_score: 88
+      notes: "OpenAI技术方向"
+
+    - handle: "@ilyasut"
+      name: "Ilya Sutskever"
+      url: "https://x.com/ilyasut"
+      role: "SSI创始人, 前OpenAI首席科学家"
+      layer: L4
+      trust_score: 92
+      notes: "深度学习先驱"
+
+    - handle: "@demishassabis"
+      name: "Demis Hassabis"
+      url: "https://x.com/demishassabis"
+      role: "Google DeepMind CEO"
+      layer: L4
+      trust_score: 92
+      notes: "AlphaGo/AlphaFold创造者"
+
+    - handle: "@sundarpichai"
+      name: "Sundar Pichai"
+      url: "https://x.com/sundarpichai"
+      role: "Google CEO"
+      layer: L3
+      trust_score: 85
+      notes: "Google AI战略"
+
+    - handle: "@EMostaque"
+      name: "Emad Mostaque"
+      url: "https://x.com/EMostaque"
+      role: "前Stability AI CEO"
+      layer: L4
+      trust_score: 75
+      notes: "开源AI倡导者"
+
+  # AI研究者/学者 - 技术深度
+  researchers:
+    - handle: "@karpathy"
+      name: "Andrej Karpathy"
+      url: "https://x.com/karpathy"
+      role: "前Tesla AI总监, 前OpenAI"
+      layer: L4
+      trust_score: 95
+      notes: "LLM技术解读，教育性强"
+
+    - handle: "@ylecun"
+      name: "Yann LeCun"
+      url: "https://x.com/ylecun"
+      role: "Meta首席AI科学家, 图灵奖"
+      layer: L4
+      trust_score: 90
+      notes: "深度学习先驱，观点犀利"
+
+    - handle: "@geoffreyhinton"
+      name: "Geoffrey Hinton"
+      url: "https://x.com/geoffreyhinton"
+      role: "图灵奖, AI教父"
+      layer: L4
+      trust_score: 92
+      notes: "AI安全/风险视角"
+
+    - handle: "@AndrewYNg"
+      name: "Andrew Ng (吴恩达)"
+      url: "https://x.com/AndrewYNg"
+      role: "DeepLearning.AI创始人"
+      layer: L4
+      trust_score: 90
+      notes: "AI教育普及，实用导向"
+
+    - handle: "@drfeifei"
+      name: "Fei-Fei Li (李飞飞)"
+      url: "https://x.com/drfeifei"
+      role: "斯坦福HAI联合主任"
+      layer: L4
+      trust_score: 90
+      notes: "ImageNet创造者，AI伦理"
+
+    - handle: "@lilianweng"
+      name: "Lilian Weng"
+      url: "https://x.com/lilianweng"
+      role: "前OpenAI安全系统负责人"
+      layer: L4
+      trust_score: 92
+      notes: "技术博客质量极高"
+
+    - handle: "@AmandaAskell"
+      name: "Amanda Askell"
+      url: "https://x.com/AmandaAskell"
+      role: "Anthropic角色团队负责人"
+      layer: L4
+      trust_score: 88
+      notes: "AI对齐/角色设计"
+
+    - handle: "@soumithchintala"
+      name: "Soumith Chintala"
+      url: "https://x.com/soumithchintala"
+      role: "PyTorch联合创始人"
+      layer: L4
+      trust_score: 88
+      notes: "深度学习框架洞察"
+
+  # 内容创作者/访谈者 - 二手精选源
+  creators:
+    - handle: "@lexfridman"
+      name: "Lex Fridman"
+      url: "https://x.com/lexfridman"
+      role: "AI Podcast主持人"
+      layer: L4
+      trust_score: 80
+      notes: "深度访谈AI大佬"
+
+    - handle: "@peakji"
+      name: "Yichao 'Peak' Ji"
+      url: "https://x.com/peakji"
+      role: "ManusAI"
+      layer: L5
+      trust_score: 78
+      notes: "AI Agent实践者"
+
+---
+
+# 顶级VC研究机构
+# a16z (Andreessen Horowitz) - 硅谷顶级风投，AI投资领先者
+# 特点：投资视角看AI产业，覆盖应用、模型、基建多层
+vc_research:
+  a16z:
+    # 综合入口
+    - name: "a16z AI 主站"
+      url: "https://a16z.com/ai/"
+      type: web
+      check_frequency: weekly
+      layers: [L3, L4, L5]
+      trust_score: 88
+      notes: "AI投资组合、研究报告、行业洞察的综合入口"
+
+    # L5 应用层 - AI产品趋势
+    - name: "Notes on AI Apps"
+      url: "https://a16z.com/notes-on-ai-apps-in-2026/"
+      type: article_series
+      check_frequency: monthly
+      layer: L5
+      trust_score: 90
+      notes: "年度AI应用趋势深度分析，投资视角"
+
+    - name: "a16z Big Ideas Newsletter"
+      url: "https://www.a16z.news/"
+      type: newsletter
+      check_frequency: weekly
+      layers: [L4, L5]
+      trust_score: 88
+      notes: "年度预测(Big Ideas系列)，Substack订阅"
+
+    # L4 大模型层 - AI技术讨论
+    - name: "AI + a16z Podcast"
+      url: "https://a16z.com/podcasts/ai-a16z/"
+      type: podcast
+      check_frequency: weekly
+      layer: L4
+      trust_score: 88
+      notes: "AI专属播客，邀请顶级工程师/创始人深度对话"
+
+    # L3 基建层 - 基础设施分析
+    - name: "a16z Infra Archives"
+      url: "https://a16z.com/category/infra/"
+      type: blog
+      check_frequency: weekly
+      layer: L3
+      trust_score: 90
+      notes: "AI基础设施深度分析：Agent架构、云计算、数据中心"
+
+    # X平台账号
+    - name: "a16z Official"
+      handle: "@a16z"
+      url: "https://x.com/a16z"
+      type: social
+      check_frequency: daily
+      layers: [L3, L4, L5]
+      trust_score: 85
+      notes: "官方账号，投资动态、行业观点"
+
+    - name: "a16z Infra"
+      handle: "@a16zinfra"
+      url: "https://x.com/a16zinfra"
+      type: social
+      check_frequency: daily
+      layer: L3
+      trust_score: 85
+      notes: "基础设施团队账号"
+
+---
+
+# YouTube 频道
+# 视频形式的深度内容，适合通勤/碎片时间学习
+youtube_channels:
+
+  # 学术/教育类 - 系统性学习
+  academic:
+    - name: "李宏毅 (Hung-yi Lee)"
+      handle: "@HungyiLeeNTU"
+      url: "https://www.youtube.com/@HungyiLeeNTU"
+      type: video
+      check_frequency: weekly
+      layer: L4
+      trust_score: 95
+      language: zh-TW
+      notes: "台大教授，机器学习/深度学习系统课程，中文AI教育天花板"
+
+    - name: "李沐 (Mu Li)"
+      handle: "@mu_li"
+      url: "https://www.youtube.com/@mu_li"
+      type: video
+      check_frequency: weekly
+      layer: L4
+      trust_score: 95
+      language: zh-CN
+      notes: "前AWS首席科学家，深度学习论文精读，技术深度极高"
+
+    - name: "Two Minute Papers"
+      handle: "@TwoMinutePapers"
+      url: "https://www.youtube.com/@TwoMinutePapers"
+      type: video
+      check_frequency: weekly
+      layer: L4
+      trust_score: 88
+      language: en
+      notes: "AI论文可视化解读，更新快，入门友好"
+
+  # 技术实践类 - 动手能力
+  technical:
+    - name: "LangChain"
+      handle: "@LangChain"
+      url: "https://www.youtube.com/@LangChain"
+      type: video
+      check_frequency: weekly
+      layer: L5
+      trust_score: 90
+      language: en
+      notes: "LangChain官方频道，AI应用开发教程"
+
+    - name: "bycloud"
+      handle: "@bycloudAI"
+      url: "https://www.youtube.com/@bycloudAI"
+      type: video
+      check_frequency: weekly
+      layer: L4
+      trust_score: 82
+      language: en
+      notes: "AI技术解读，实践导向"
+
+  # 产品/商业类 - 应用视角
+  product:
+    - name: "Lenny's Podcast"
+      handle: "@LennysPodcast"
+      url: "https://www.youtube.com/@LennysPodcast"
+      type: video
+      check_frequency: weekly
+      layer: L5
+      trust_score: 88
+      language: en
+      notes: "产品管理顶级播客，AI产品化视角"
+
+    - name: "Jason效率实验室"
+      handle: "@JasonEfficiencyLab"
+      url: "https://www.youtube.com/@JasonEfficiencyLab"
+      type: video
+      check_frequency: weekly
+      layer: L5
+      trust_score: 80
+      language: zh-CN
+      notes: "效率工具/AI应用实践"
+
+  # 综合科普类 - 行业动态
+  general:
+    - name: "零度解说"
+      handle: "@lingdujieshuo"
+      url: "https://www.youtube.com/@lingdujieshuo"
+      type: video
+      check_frequency: weekly
+      layer: L4
+      trust_score: 78
+      language: zh-CN
+      notes: "中文AI/科技资讯，更新频繁"
+
+---
+
+# B站 AI 频道（中文视频热门源）
+# 策略：搜索 "AI" + 按播放量排序，抓取热门视频
+bilibili_channels:
+
+  # AI 工具/教程类
+  tutorial:
+    - name: "轩酱xuan"
+      url: "https://space.bilibili.com/轩酱"
+      type: video
+      check_frequency: daily
+      layer: L5
+      trust_score: 82
+      language: zh-CN
+      notes: "AI工具实操、Agent搭建教程、AI日报方法论"
+
+    - name: "花生酱不加糖"
+      url: "https://space.bilibili.com/花生酱不加糖"
+      type: video
+      check_frequency: weekly
+      layer: L5
+      trust_score: 80
+      language: zh-CN
+      notes: "AI效率工具、Cursor实践"
+
+  # AI 资讯/趋势类
+  news:
+    - name: "机器之心"
+      url: "https://space.bilibili.com/机器之心"
+      type: video
+      check_frequency: daily
+      layer: L4
+      trust_score: 78
+      language: zh-CN
+      notes: "AI行业资讯视频版"
+
+  # 热门发现策略
+  trending_search:
+    query: "AI"
+    sort_by: "播放量"
+    time_range: "本周"
+    top_n: 10
+    notes: "每日搜索 AI + 按播放量排序，取 Top 10 视频作为热门信号"
+
+# 知识星球 AI 付费社区（中文深度内容源）
+# 策略：搜索 AI 相关圈子的精华内容，付费社区信噪比高于公开平台
+zsxq_communities:
+
+  # AI 工具/创业类
+  ai_tools:
+    - name: "AI破局俱乐部"
+      type: paid_community
+      check_frequency: weekly
+      layer: L5
+      trust_score: 85
+      language: zh-CN
+      notes: "AI应用落地、商业化案例、工具评测"
+
+    - name: "AI产品经理"
+      type: paid_community
+      check_frequency: weekly
+      layer: L5
+      trust_score: 82
+      language: zh-CN
+      notes: "AI产品设计、PM视角"
+
+  # 热门发现策略
+  trending_search:
+    query: "AI agent OR AI工具 OR 大模型"
+    platform: zsxq.com
+    notes: "WebSearch site:zsxq.com 搜索AI相关精华内容，知识星球内容信噪比高"
+
+---
+
+# 审计配置
+audit:
+  frequency: quarterly
+  next_audit: "2026-04-01"
+  metrics:
+    - accuracy       # 报道准确性
+    - timeliness     # 时效性
+    - signal_noise   # 信噪比
+    - uniqueness     # 独特性
+
+  actions:
+    score_below_60: "移除或降级"
+    score_60_to_75: "降低检查频率"
+    score_above_85: "保持或提升优先级"

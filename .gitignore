@@ -1,82 +1,33 @@
-# ============================================================
-# AI 科研军团 .gitignore
-# ============================================================
-
-# ------ 数据文件（不提交原始数据） ------
-*.csv
-*.xlsx
-*.xls
-*.sav
-*.dta
-*.sas7bdat
-*.rds
-*.rda
-*.parquet
-*.feather
-*.h5
-*.hdf5
-
-# ------ 项目产出（每个项目独立管理） ------
-/outputs/
-/submission_package/
-/figures/
-/delivery/
-/clients/
-/projects/
-/reports/
-/reviews/
-/uploads/
-/bench/
-
-# ------ 系统文件 ------
+# OS
 .DS_Store
-Thumbs.db
-*.swp
-*.swo
-*~
 
-# ------ Python ------
-*.pyc
+# Python
 __pycache__/
-*.egg-info/
-dist/
-build/
-.venv/
-venv/
-env/
+*.pyc
+*.pyo
 
-# ------ R ------
-.Rhistory
-.RData
-.Rproj.user/
-
-# ------ 凭证和敏感信息 ------
-.env
-.env.*
-*.key
-*.pem
-credentials/
-secrets/
-*.db
-*.sqlite
-*.sqlite3
-
-# ------ IDE ------
-.idea/
-.vscode/
-*.code-workspace
-
-# ------ 错误数据库 ------
-errors.db
+# 错误收集器数据库（各目录下都有）
 E:/
+errors.db
 
-# ------ 日志 ------
-*.log
+# 数据库文件
+*.db
+*.db-shm
+*.db-wal
+
+# 日志
 logs/
-.cron-state/
-.install-manifest
 
-# ------ 临时文件 ------
-tmp/
-temp/
-*.tmp
+# 客户数据（敏感，绝不入库）
+clients/
+
+# 测试产出的数据文件（图片、CSV等）
+tests/*/cif_plot*.png
+tests/*/*.csv
+tests/*/*.flag
+
+# 生成的PDF
+*.pdf
+
+# 环境变量
+.env

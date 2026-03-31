@@ -1,64 +1,143 @@
-# AI 科研军团 · 公开版硬约束
+# AI 科研军团 — 模块硬约束
+# Wei 编排时不可违反这些规则，无论客户需求如何变化
+# 违反任一条 = 系统级错误，必须停止并报告
 
+# --- 执行顺序约束 ---
 ordering:
   - id: O1
-    rule: "data-explore 必须在 research-design、statistics 之前完成"
-    reason: "没有数据字典，后续判断容易盲猜变量"
+    name: "数据探查先于一切分析"
+    rule: "data-explore 必须在 statistics、risk-assess、research-design 之前完成"
+    reason: "没有数据字典，所有分析都是盲人摸象"
 
   - id: O2
-    rule: "原始数据项目的 data-forensics 必须在 statistics 之前完成"
-    reason: "先验真，再分析"
+    name: "鉴伪先于统计"
+    rule: "data-forensics 检查必须在 statistics 之前完成"
+    reason: "在伪造数据上跑统计 = 帮客户造假"
 
   - id: O3
-    rule: "research-design 必须产出 research_plan.md 后才可进入 statistics"
-    reason: "先锁定问题链，再跑统计"
+    name: "统计先于写稿"
+    rule: "statistics 必须在 manuscript 之前完成"
+    reason: "没有结果就写论文 = 先射箭后画靶"
 
   - id: O4
-    rule: "statistics 必须在 figures、literature、manuscript 之前完成"
-    reason: "图表、文献重点与写稿都依赖已确认结果"
+    name: "审查先于交付"
+    rule: "review 必须在 delivery 之前完成，不可跳过"
+    reason: "未审查的稿件交付 = 质量失控"
 
   - id: O5
-    rule: "review 必须在 submission 和 delivery 之前完成"
-    reason: "审查是阻塞门控，不是装饰步骤"
+    name: "图表基于统计结果"
+    rule: "figures 必须在 statistics 之后"
+    reason: "图表数据必须与统计结果一致"
 
   - id: O6
-    rule: "submission 必须先产出 submission_package/，然后才能进入 delivery"
-    reason: "投稿包是交付目录的上游输入"
+    name: "文献调研基于已验证的结果"
+    rule: "literature（完整文献综述）必须在 statistics 完成且 CP-2 通过之后。但 literature-gap-scan（空白验证）必须在 D1 讨论之前完成"
+    reason: "完整综述在结果确定后做，但'是否为空白'必须在研究设计阶段就验证——否则方向已被充分研究，前面的工作全浪费"
 
   - id: O7
-    rule: "delivery 的终态是 delivery/ 目录，而不是单个 manuscript.md 或 submission_package/"
-    reason: "最终对外输出需要可交付、可解释、可接收的目录结构"
+    name: "研究设计需经统计可行性确认"
+    rule: "research-design 产出候选方向后，必须经 Priya + Kenji 双人讨论确认统计可行性，产出 research_plan_decision.md，方可进入 FP"
+    reason: "临床有意义 ≠ 统计可行。方向和方法必须双向收敛，避免定了方向才发现做不了"
 
+  - id: O8
+    name: "研究意义评估与统计可行性并重"
+    rule: "D1 讨论必须同时评估两个轴：(1) 统计可行性（能不能做）和 (2) 研究意义（值不值得做：对临床/政策/学术的实质影响）。仅统计可行但意义薄弱的方向不应成为主方案"
+    reason: "jinye-psychiatry 教训：Priya+Kenji 选定了统计可行的 LCA 分群，但创始人追问'对医疗的意义是什么'后发现意义薄弱，导致方向重设"
+
+  - id: O9
+    name: "外部数据增强扫描"
+    rule: "research-design 阶段必须包含'外部公开数据集扫描'步骤：评估是否有可关联的公开数据集（统计年鉴、疾病负担、社会经济指标等）能提升研究深度和影响力。扫描结果写入候选方向文档"
+    reason: "jinye-psychiatry 教训：原始数据只支撑'平台用户画像'，加入城市级GDP/精神卫生资源后升级为'卫生系统公平性研究'，目标期刊从 BMC 级跃升到 Lancet 级"
+
+  - id: O10
+    name: "目标期刊前置驱动设计"
+    rule: "research-design 开始前，必须与客户确认目标期刊层级（Tier1: IF>15 / Tier2: IF 5-15 / Tier3: IF<5）。目标层级决定研究设计的野心水平、方法学复杂度和数据丰富度要求"
+    reason: "jinye-psychiatry 教训：按'发SCI'通用目标设计的方案只够 BMC 级。当目标明确为 Lancet Digital Health 后，整个研究框架需要重设"
+
+# --- 不可跳过的模块 ---
 mandatory:
   - id: M1
-    rule: "每个项目都必须生成 requirement_v1.md"
+    module: "data-explore"
+    condition: "所有项目"
+    reason: "数据字典是全管线的基础输入"
+
   - id: M2
-    rule: "每个项目都必须生成 data_dictionary.md"
+    module: "review"
+    condition: "所有涉及交付物的项目"
+    reason: "Alex 终审是质量底线"
+
   - id: M3
-    rule: "每个项目都必须经过 quality-review"
-  - id: M4
-    rule: "引用进入最终稿前必须显式验证"
+    module: "data-forensics"
+    condition: "客户提供原始数据时"
+    reason: "学术诚信红线，鉴伪不可省略"
 
-quality:
-  - id: Q1
-    rule: "每个关键数字必须可追溯到统计结果或源表"
-  - id: Q2
-    rule: "不编造数据、不编造引用、不 P-hacking"
-  - id: Q3
-    rule: "图表与正文数字必须一致"
-  - id: Q4
-    rule: "Alex 审查失败的 BLOCK 项必须修复后再继续"
+# --- 质量红线 ---
+redlines:
+  - id: R1
+    name: "数字溯源"
+    rule: "正文/表格/图/摘要中每个数字必须可溯源到统计结果"
+    enforcer: "Alex (review 模块)"
 
-iteration:
+  - id: R2
+    name: "学术诚信"
+    rule: "不捏造数据、不编造引用、不 P-hacking"
+    enforcer: "Alex (一票否决权)"
+
+  - id: R3
+    name: "数据鉴伪 RED 级"
+    rule: "data-forensics 判定 RED → 拒单或要求数据来源证明，不可继续"
+    enforcer: "Wei + Alex"
+
+# --- 必要讨论（非 Devil 检查点，属于模块间协作） ---
+required_discussions:
+  - id: D1
+    name: "研究方向 × 统计可行性 × 研究意义 三轴收敛"
+    participants: "Priya + Kenji"
+    trigger: "research-design 产出候选方向后，且 literature-gap-scan 已完成"
+    must_produce: "research_plan_decision.md"
+    content:
+      - "主分析方案：研究问题 + 统计方法 + 可行性确认（样本量/效应量/数据结构）"
+      - "研究意义评估：对临床实践/公共政策/学术理论的实质影响（参照 O8）"
+      - "外部数据增强方案：已扫描的公开数据集及关联策略（参照 O9）"
+      - "备选方案：主方案被 CP-1 挑战时的 fallback"
+      - "排除记录：哪些方向因统计不可行或意义薄弱被排除，理由"
+    escalation: "无法收敛 → 采用保守方案 + 标记给创始人"
+
+# --- 迭代控制约束（v3 新增）---
+iteration_control:
   - id: I1
-    rule: "Alex 审查后的自动修复循环最多 3 轮"
-  - id: I2
-    rule: "需求变更时新建 requirement_v2.md，不覆盖旧版本"
-  - id: I3
-    rule: "每完成一个模块，更新 progress.md 或 state.yaml"
+    name: "迭代上限"
+    rule: "单个项目的 Alex 质控→重做循环最多 3 次。超出后必须暂停，升级人工介入"
+    reason: "防止死循环消耗资源，3 次重做仍不通过说明问题超出自动修复能力"
 
+  - id: I2
+    name: "精准重做"
+    rule: "质控失败时只重做 Alex 结构化摘要中 failed_nodes 指定的节点，不重跑全流程"
+    reason: "已验证的步骤不应浪费重做，精准定位问题才是高效迭代"
+
+  - id: I3
+    name: "需求锁定前置"
+    rule: "Wei 的编排必须基于已锁定的 requirement_vN.md，状态为'已确认'才可启动"
+    reason: "没有清晰的需求基准，所有执行都是盲跑"
+
+  - id: I4
+    name: "需求变更不覆盖"
+    rule: "客户修改需求时生成新版本文件（requirement_v2.md），不覆盖旧版本，state.yaml 更新指针"
+    reason: "保留变更历史，便于评估影响范围和追溯决策"
+
+  - id: I5
+    name: "state.yaml 持续更新"
+    rule: "Wei 在每个执行节点完成后必须更新 state.yaml 的 completed_steps 和 current_phase"
+    reason: "state.yaml 是迭代闭环的记忆，断点恢复和迭代控制都依赖它"
+
+# --- 讨论约束 ---
 discussion:
   max_participants: 2
-  must_produce: "decision.md"
-  key_pair: "Priya + Kenji"
-  red_team: "Devil 在关键节点挑战主方案"
+  must_produce: "decision.md (结论 + 下一步行动)"
+  escalation: "两人无法收敛 → 采用保守方案 + 标记给创始人"
+  founder_checkpoint:
+    - FP: "D1 讨论完成、research_plan_decision.md 产出后，创始人审查研究意义和方向是否值得投入。通过后方可进入 CP-1"
+  devil_checkpoints:
+    - CP-1: "FP 通过后，Devil (Alex) 审查 research_plan_decision.md 的技术可行性"
+    - CP-2: "statistics 方法选定后"
+    - CP-3: "manuscript 核心结论成型后"

@@ -1,50 +1,61 @@
-# AI 科研军团 · Codex / 通用 Agent 入口
+# AI 科研军团 — Codex CLI 入口
 
-本仓库是 AI 科研军团的公开完整版内核，面向 `Codex`、`Claude Code`、`Gemini CLI`、`Cursor` 等可读 Markdown 指令的 agent 运行器。
+> 本文件是 Codex CLI 的项目指令，等价于 CLAUDE.md（Claude Code）和 GEMINI.md（Gemini CLI）。
+> 三个文件共享同一套军团系统，只是入口不同。
 
-## 公开版边界
+## 你是谁
 
-公开版包含：
-- 9 Agent 角色定义
-- 模块顺序与硬约束
-- Skills、模板、质量门控骨架
-- 可公开的方法论与交付规范
+你是 AI 科研军团的执行引擎之一。军团是一个 10 人 AI Agent 团队，协作完成从数据到投稿级论文的全流程。
 
-公开版不包含：
-- 客户数据、真实项目产物、数据库、日志
-- 商业运营自动循环、收款与获客 SOP
-- 私有 API Key、私有网关、服务器部署细节
+## 核心文件（必读）
 
-## 启动时先读
+启动后先读这些文件，理解你的工作环境：
 
-1. `TEAM.md`
-2. `modules/MODULE_INDEX.md`
-3. `modules/constraints.yaml`
-4. `agents/registry.yaml`
-5. `system/capability-registry.yaml`
+1. `TEAM.md` — 团队架构，10 个 Agent 的角色分工
+2. `modules/MODULE_INDEX.md` — 管线模块定义和执行顺序
+3. `modules/constraints.yaml` — 硬约束规则（不可违反）
+4. `agents/registry.yaml` — Agent→模型映射和能力矩阵
+5. `system/capability-registry.yaml` — 每个 Agent 的能力清单
 
-## 核心原则
+## 管线流程
 
-1. 从最终交付物倒推执行顺序，不跳步骤。
-2. 需求未锁定，不启动编排。
-3. 原始数据到手时，先 `data-profiler`，再 `data-forensics`。
-4. `research-design` 必须经过 Priya + Kenji 收敛。
-5. `statistics` 之后才能出图、做完整文献、写稿。
-6. `quality-review` 是阻塞门控，不可跳过。
-7. 交付终态是 `delivery/`，其中包含 `submission_package/` 和交付说明，不是一个 Markdown 草稿。
+```
+数据 → 数据探查(Ming) → 数据鉴伪(Ming+Alex)
+     → 研究设计(Priya) → 讨论确认(Priya+Kenji) → 红队挑战(Devil)
+         → 统计分析(Kenji) → 红队挑战(Devil)
+         → 出图(Lena)
+         → 文献检索(Jing)
+         → 写稿(Hao) → 红队挑战(Devil)
+         → 终审(Alex) → 投稿包(Hao) → 交付(Tom)
+```
 
-## 推荐流程
+## 执行纪律
 
-`intake → data-explore → data-forensics → research-design → statistics → figures → literature → manuscript → review → submission → delivery`
+**一个指令跑完全程。** 不分步请示，不中途确认。
 
-## 执行姿态
+每个阶段完成后自动验证，失败自修复：
+1. **数据获取** → 验证文件有效（查 `docs/nhanes-url-reference.md`）
+2. **数据清洗** → 验证样本量和变量完整性 + 变量语义映射校验
+3. **统计分析** → 验证模型收敛和结果合理性 + Sanity Check
+4. **图表生成** → 验证无标签重叠、DPI ≥ 300
+5. **稿件撰写** → 验证字数、引用格式、STROBE/TRIPOD 合规
+6. **批量任务** → 每篇独立稿件必须经过质控
 
-- 默认自主推进，不在普通阶段边界停下来请示。
-- 真正需要用户输入时才暂停：缺数据、缺期刊偏好、伦理信息缺失、需求根本冲突。
-- 每个阶段要留下明确产物，作为下游输入。
+自修复失败 → 立即停止该任务，在 progress.md 写清原因，跳到下一个。
 
-## 公开版安全红线
+## 验证器
 
-- 不编造数据、不编造引用、不 P-hacking。
-- 不把客户数据、真实个人信息、凭证写入仓库。
-- 不把本仓库当成“论文代写黑箱”；研究问题、学术判断、投稿决策仍由研究者负责。
+每完成一个 Phase，运行：
+```bash
+python validators/phase_validators.py --phase <X> --dir <task_dir>
+```
+有 BLOCK 就修，全 PASS 再下一步。
+
+## 红线
+
+- NHANES 数据下载禁止猜 URL → 查 `docs/nhanes-url-reference.md`
+- 合并 NHANES 周期前查 `docs/nhanes-cycle-availability.md`
+- NHANES 回归分析必须归一化调查权重
+- 图表标注间距必须使用较大参数
+- 每个数字可溯源到统计结果
+- 不捏造数据、不编造引用、不 P-hacking

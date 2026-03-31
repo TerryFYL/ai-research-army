@@ -1,0 +1,54 @@
+# Model Tester Skill - 模型注册表
+# 与 ~/ai-research-army/tests/model-radar/models.yaml 保持同步
+#
+# 添加新模型: 在 models 段追加记录，然后运行:
+#   cd ~/ai-research-army
+#   python tests/model-radar/test_cases.py --model <id> --full --merge
+
+# ─── 端点定义 ──────────────────────────────────────────────
+endpoints:
+  local:
+    base_url: "http://127.0.0.1:8045/v1"
+    api_key: "${LOCAL_API_KEY}"
+  openrouter:
+    base_url: "https://openrouter.ai/api/v1"
+    api_key: "${OPENROUTER_API_KEY}"
+  aicodewith:
+    base_url: "https://api.aicodewith.com/chatgpt/v1"
+    api_key: "${AICODEWITH_API_KEY}"
+
+# ─── 已测试模型 ────────────────────────────────────────────
+models:
+  claude-opus-4-6-thinking:
+    label: "Opus 4.6"
+    family: "Anthropic"
+    route: local
+
+  claude-sonnet-4-6:
+    label: "Sonnet 4.6"
+    family: "Anthropic"
+    route: local
+
+  claude-haiku-4-5:
+    label: "Haiku 4.5"
+    family: "Anthropic"
+    route: local
+
+  gemini-3.1-pro-high:
+    label: "Gemini 3.1 Pro"
+    family: "Google"
+    route: local
+
+  gpt-5-4:
+    label: "GPT-5-4"
+    family: "OpenAI"
+    route: aicodewith
+
+# ─── 添加新模型 ────────────────────────────────────────────
+# 取消注释并修改:
+#
+#  new-model-id:
+#    label: "New Model"
+#    family: "Vendor"
+#    route: local            # local / aicodewith / openrouter
+#    model_map: "actual-id"  # 可选: API 实际接受的 model ID

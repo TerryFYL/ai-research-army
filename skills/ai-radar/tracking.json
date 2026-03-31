@@ -1,0 +1,89 @@
+{
+  "version": "1.0.0",
+  "last_updated": "2026-01-30",
+  "description": "自定义追踪关键词配置，用于个性化信息雷达扫描",
+
+  "custom_keywords": {
+    "L5_applications": [
+      "Claude Code",
+      "Cursor AI",
+      "AI coding assistant",
+      "AI agent",
+      "Manus AI",
+      "Devin AI",
+      "AI scientific research",
+      "AI research assistant",
+      "AI lab management",
+      "AI for science"
+    ],
+    "L4_models": [
+      "Claude 4",
+      "GPT-5",
+      "Gemini 2",
+      "DeepSeek V3",
+      "reasoning model",
+      "o3 model",
+      "scientific LLM",
+      "AI research model"
+    ],
+    "L3_infrastructure": [
+      "AI inference cost",
+      "GPU cluster",
+      "AI cloud pricing"
+    ],
+    "L2_chips": [
+      "NVIDIA Blackwell",
+      "AMD MI400",
+      "AI chip 2026"
+    ],
+    "L1_energy": [
+      "AI data center energy",
+      "nuclear power AI"
+    ]
+  },
+
+  "tracked_entities": {
+    "companies": [
+      "Anthropic",
+      "OpenAI",
+      "Google DeepMind",
+      "Meta AI",
+      "DeepSeek"
+    ],
+    "products": [
+      "Claude Code",
+      "ChatGPT",
+      "Gemini",
+      "Cursor"
+    ],
+    "people": [
+      "Dario Amodei",
+      "Sam Altman",
+      "Demis Hassabis"
+    ]
+  },
+
+  "alert_keywords": {
+    "description": "匹配这些关键词时标记为🔴重大动态",
+    "keywords": [
+      "发布",
+      "release",
+      "announce",
+      "launch",
+      "breakthrough",
+      "AGI",
+      "GPT-5",
+      "Claude 4"
+    ]
+  },
+
+  "exclude_keywords": {
+    "description": "过滤掉包含这些关键词的噪音内容",
+    "keywords": [
+      "crypto",
+      "NFT",
+      "meme coin",
+      "stock price"
+    ]
+  }
+}
