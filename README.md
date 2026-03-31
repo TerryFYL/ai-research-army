@@ -144,9 +144,11 @@ bash install.sh
 
 前置条件：
 
-- [Claude Code](https://docs.anthropic.com/en/docs/claude-code) 或兼容的 Markdown skill 运行器
-- 基本命令行环境
+- [Claude Code](https://docs.anthropic.com/en/docs/claude-code)（CLI / Desktop / Web 均可）— **这是唯一的 AI 引擎依赖，不需要额外配置任何 API key**。Claude Code 自带的 Claude 模型能力即为军团的核心大模型。
+- 基本命令行环境（macOS / Linux / WSL）
 - 研究者自己负责研究问题、伦理判断与最终学术决策
+
+> **常见问题**：仓库里 `skills/model-tester/config/models.yaml` 中的 `${ENV_VAR}` 占位符是「模型雷达」测试功能使用的（用于对比不同 LLM 的能力），**不影响军团核心流程**。只要有 Claude Code 就能跑完整个 pipeline。
 
 ---
 
