@@ -5,7 +5,8 @@
     "repository": "TerryFYL/ai-research-army",
     "directory_url": "https://github.com/TerryFYL/ai-research-army/tree/main/public_release/C052",
     "script_url": "https://github.com/TerryFYL/ai-research-army/blob/main/public_release/C052/reproduce_main_analysis.py",
-    "analysis_data_url": "https://raw.githubusercontent.com/TerryFYL/ai-research-army/main/public_release/C052/analysis_ready.csv",
+    "analysis_data_bundle_path": "submission_package/analysis_ready.csv",
+    "source_data_note": "Public source datasets are cited in the manuscript and remain available from CDC/NCHS, CDC FluView, and the Census API.",
     "bundle_build_script_path": "submission_package/build_c052_package.py"
   },
   "files": [
@@ -31,8 +32,8 @@
     },
     {
       "path": "submission_package/manuscript.md",
-      "bytes": 34655,
-      "sha256": "aa6f69dcf9385e4aeb8084407ec87ccac3e954f00f17b642a39d42eeb729e541"
+      "bytes": 34653,
+      "sha256": "d54e9ccdbec56adda235a03b0c3cc2aba3b21d642c30045437b48c829641c1ac"
     },
     {
       "path": "submission_package/manuscript.docx",
