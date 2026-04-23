@@ -1,0 +1,9 @@
+analysis,term,se_scheme,estimate_per_10pp,ci_low,ci_high,p_value
+Primary pre-COVID weighted linear model,coverage_m12_all,HC3,-3.073531039010564,-11.711765054769515,5.564702976748387,0.486524060815758
+Primary pre-COVID weighted linear model,coverage_m12_all,Jurisdiction-clustered,-3.073531039010564,-9.883022444343005,3.7359603663218777,0.3809380819516904
+Primary pre-COVID weighted linear model,coverage_m12_all,Season-clustered,-3.073531039010564,-9.88988937626735,3.7428272982462216,0.42673846659016684
+Primary pre-COVID weighted linear model,coverage_m12_all,Two-way clustered (jurisdiction + season),-3.073531039010564,-9.341350950118594,3.194288872097466,0.3364923348907829
+Pooled weighted era-interaction model,coverage_x_covid_era,HC3,2.2886202669735867,-0.7436658751422465,5.32090640908942,0.14019751999934962
+Pooled weighted era-interaction model,coverage_x_covid_era,Jurisdiction-clustered,2.2886202669735867,0.5265881207961807,4.050652413150992,0.014243354679862067
+Pooled weighted era-interaction model,coverage_x_covid_era,Season-clustered,2.2886202669735867,-2.465287605986571,7.0425281399337445,0.376802869791806
+Pooled weighted era-interaction model,coverage_x_covid_era,Two-way clustered (jurisdiction + season),2.2886202669735867,-1.9987483330192735,6.575988866966447,0.29544171280519865
