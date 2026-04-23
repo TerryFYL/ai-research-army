@@ -1,0 +1,18 @@
+section,metric,value
+retention_model,model_rows_with_complete_covariates,405
+retention_model,retained_rows,333
+retention_model,missing_rows,72
+retention_model,retained_share,0.8222222222222222
+retention_model,formula,retained ~ coverage_m12_all + acs_pct_age65plus + acs_income_10k + acs_poverty_pct + C(year_season)
+positivity,pred_retained_min,0.2704722254692491
+positivity,pred_retained_p5,0.5491450338200127
+positivity,pred_retained_median,0.8621672788174384
+positivity,pred_retained_p95,0.9791561921656257
+positivity,pred_retained_max,0.99
+weights,pred_retained_clip_lower,0.05
+weights,pred_retained_clip_upper,0.99
+weights,availability_ipw_min,0.8244206773618539
+weights,availability_ipw_p5,0.833551078275678
+weights,availability_ipw_median,0.9466567459016947
+weights,availability_ipw_p95,1.486267972362104
+weights,availability_ipw_max,3.017598088573531
