@@ -1,15 +1,36 @@
-# C052 Public Release
+# C052 Public Review Mirror
 
-This directory contains the manuscript-specific public release artifacts for C052, a reproducible ecological repeated panel analysis of influenza vaccination coverage and excess pneumonia-and-influenza mortality in US jurisdictions during the 2015-16 to 2022-23 influenza seasons.
+This directory is the open-access review mirror referenced in the manuscript's Data Availability Statement.
 
-Contents:
-- `manuscript.md`: manuscript submitted for pre-submission review
-- `analysis_ready.csv`: harmonized jurisdiction-season analytic dataset
-- `build_c052_package.py`: reproducible build script
-- `reproducibility_manifest.json`: file hashes and parent repository commit
-- `table2_primary_linear_model.csv`: weighted and unweighted primary linear models
-- `table7_missingness_by_season.csv`: season-level missingness pattern table
-- `table8_missingness_by_jurisdiction.csv`: jurisdiction-level missingness pattern table
-- `table9_sample_split_threshold_validation.csv`: split-sample threshold validation summary
+- Repository: `TerryFYL/ai-research-army`
+- Public URL: https://github.com/TerryFYL/ai-research-army/tree/main/public_release/C052
+- Public script URL: https://github.com/TerryFYL/ai-research-army/blob/main/public_release/C052/reproduce_main_analysis.py
+- Public raw data URL: https://raw.githubusercontent.com/TerryFYL/ai-research-army/main/public_release/C052/analysis_ready.csv
 
-Source data remain public CDC/NCHS and CDC FluView datasets cited in the manuscript.
+## Included files
+
+- `manuscript.md`
+- `analysis_ready.csv`
+- `reproduce_main_analysis.py`
+- `reproducibility_manifest.json`
+- `cdc_wonder_replacement_protocol.md`
+- `strobe_checklist.md`
+- `table2_primary_linear_model.csv`
+- `table10_linear_sensitivity_models.csv`
+- `table11_era_interaction_model.csv`
+- `table12_availability_ipw_diagnostics.csv`
+- `table13_availability_balance_diagnostics.csv`
+- `table14_alternative_inference_sensitivity.csv`
+- `table15_outcome_construction.csv`
+
+## Interpretation notes
+
+- The pre-COVID weighted fixed-effects linear model is the primary inferential result.
+- The pooled era-interaction estimate is exploratory and becomes less decisive under season-clustered and two-way clustered uncertainty estimators.
+- Threshold results are post hoc, unstable across validation checks, and are not presented as implementation-ready targets.
+- No CDC WONDER-derived mortality counts are claimed in this release.
+
+## Versioning
+
+The public mirror is paired with the manuscript-specific frozen peer-review bundle in `submission_package/`.
+`reproducibility_manifest.json` records SHA-256 hashes for the mirrored manuscript-specific files.
