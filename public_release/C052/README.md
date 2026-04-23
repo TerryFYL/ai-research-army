@@ -5,12 +5,11 @@ This directory is the open-access review mirror referenced in the manuscript's D
 - Repository: `TerryFYL/ai-research-army`
 - Public URL: https://github.com/TerryFYL/ai-research-army/tree/main/public_release/C052
 - Public script URL: https://github.com/TerryFYL/ai-research-army/blob/main/public_release/C052/reproduce_main_analysis.py
-- Public raw data URL: https://raw.githubusercontent.com/TerryFYL/ai-research-army/main/public_release/C052/analysis_ready.csv
+- Public source-data note: see the CDC/NCHS, FluVaxView, FluView, and Census API URLs cited in `manuscript.md`
 
 ## Included files
 
 - `manuscript.md`
-- `analysis_ready.csv`
 - `reproduce_main_analysis.py`
 - `reproducibility_manifest.json`
 - `cdc_wonder_replacement_protocol.md`
@@ -32,5 +31,5 @@ This directory is the open-access review mirror referenced in the manuscript's D
 
 ## Versioning
 
-The public mirror is paired with the manuscript-specific frozen peer-review bundle in `submission_package/`.
+The public mirror is paired with the manuscript-specific frozen peer-review bundle in `submission_package/`, which contains `analysis_ready.csv` and the full package-build script.
 `reproducibility_manifest.json` records SHA-256 hashes for the mirrored manuscript-specific files.
