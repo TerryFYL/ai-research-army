@@ -1,36 +1,108 @@
 {
-  "timestamp": "2026-04-23T16:47:32Z",
+  "timestamp": "2026-04-23T19:28:03Z",
   "repo_commit": "c8c776a152d54108a9db0bfc7467112e5df2d7a6",
+  "public_release": {
+    "repository": "TerryFYL/ai-research-army",
+    "directory_url": "https://github.com/TerryFYL/ai-research-army/tree/main/public_release/C052",
+    "script_url": "https://github.com/TerryFYL/ai-research-army/blob/main/public_release/C052/reproduce_main_analysis.py",
+    "analysis_data_url": "https://raw.githubusercontent.com/TerryFYL/ai-research-army/main/public_release/C052/analysis_ready.csv",
+    "bundle_build_script_path": "submission_package/build_c052_package.py"
+  },
   "files": [
     {
       "path": "scripts/build_c052_package.py",
-      "bytes": 103638,
-      "sha256": "39d9527ed733da88c746499d80ddd981d28709e805750abbe18dfa94cd033731"
+      "bytes": 179543,
+      "sha256": "fd88e25805fd3c94770d8e0139689fec90f025c65bd5633b30a3933d15ed1697"
     },
     {
       "path": "data/processed/analysis_ready.csv",
-      "bytes": 67379,
-      "sha256": "76b52efedaa4291e124972f786a1925e2ef931dc2a97f48b450e0744c722c49c"
+      "bytes": 92981,
+      "sha256": "2140d47c9b43eb42c50a7fe45f60f8b3b3d0317fd5252f1e6b643c2385cab719"
+    },
+    {
+      "path": "data/processed/acs_state_covariates.csv",
+      "bytes": 37647,
+      "sha256": "97f08c5fe12810012e967481fa5cc9121dd9769e294ec6f1b027653174486f52"
+    },
+    {
+      "path": "submission_package/reproduce_main_analysis.py",
+      "bytes": 5599,
+      "sha256": "e5fc9a33518a073095cc5fb8c2e883e773ba3546410da8890afb7c9bd8c4b5bf"
     },
     {
       "path": "submission_package/manuscript.md",
-      "bytes": 27415,
-      "sha256": "bc8d40fc8e617b26972bea31b74ed52fd58357d0b72838a64f6e8625ce1bff81"
+      "bytes": 34655,
+      "sha256": "aa6f69dcf9385e4aeb8084407ec87ccac3e954f00f17b642a39d42eeb729e541"
     },
     {
       "path": "submission_package/manuscript.docx",
-      "bytes": 486835,
-      "sha256": "3e432bcce1df11c5d0b6eb53a60bdd6f6fb485917ffeb0e2ab616761cb980ca8"
+      "bytes": 488889,
+      "sha256": "4ca450571005e30798fcd9507ad0c12f2bc0634c933e277f7409c0b80132f73e"
     },
     {
       "path": "submission_package/title_page.md",
-      "bytes": 401,
-      "sha256": "03a9242a472c2f785b2f5b99a06e074e17cb669f1d50b20535040e89c02a1804"
+      "bytes": 542,
+      "sha256": "13107534b927a8a836e41a57e8cbcd923ba8ed019a15025179ccf5c4a2670318"
     },
     {
       "path": "submission_package/cover_letter.md",
-      "bytes": 1151,
-      "sha256": "608a22913963dabacdab353e9d379322693bdd15c48cee1f72a7b8a070759231"
+      "bytes": 1764,
+      "sha256": "16583ab08a91a8ff7e89a21007782430dda50739c4dcbf790d7a993c1b5d2f94"
+    },
+    {
+      "path": "submission_package/strobe_checklist.md",
+      "bytes": 1021,
+      "sha256": "17fadf5e18bc882d3639aa636a67518f9a02ea12c9c90df3ca464e421a7612d0"
+    },
+    {
+      "path": "submission_package/icmje_coi_declaration.md",
+      "bytes": 410,
+      "sha256": "99e2fb3e0b9216b07c396e6f2ee2170b3509bfd973fd34c581edb2a7515bd0b1"
+    },
+    {
+      "path": "submission_package/submission_materials_checklist.md",
+      "bytes": 868,
+      "sha256": "e6b49efadfc26a8b0491586002ded07a3eacc7d3b0c0f6b4562492bd7e6681f3"
+    },
+    {
+      "path": "submission_package/cdc_wonder_replacement_protocol.md",
+      "bytes": 1715,
+      "sha256": "676bb82e1f4567516f20f4673d79ee096b3779c03b6f435701618033d573636f"
+    },
+    {
+      "path": "submission_package/table2_primary_linear_model.csv",
+      "bytes": 461,
+      "sha256": "7c4ffff3a0abee6a0ce133355eba7c7abe8e2dca150135fee3375e7ae98ad8a2"
+    },
+    {
+      "path": "submission_package/table10_linear_sensitivity_models.csv",
+      "bytes": 1016,
+      "sha256": "5ca9b38f56eef0e013ed06fb090dd7fe09f45d55da837d33b3aa84c6a48c4256"
+    },
+    {
+      "path": "submission_package/table11_era_interaction_model.csv",
+      "bytes": 432,
+      "sha256": "6dbaed62e0331e516d97953f2b344ec6074d2581ae56ed81f488d688c207ac59"
+    },
+    {
+      "path": "submission_package/table12_availability_ipw_diagnostics.csv",
+      "bytes": 860,
+      "sha256": "a2571f84d325e159c43c05cd09363460b97489901fd2ac86293c38e650a40a4c"
+    },
+    {
+      "path": "submission_package/table13_availability_balance_diagnostics.csv",
+      "bytes": 790,
+      "sha256": "227ee484c6bbcc4b1bd3551bcc06a230fae5e08a33b50e4726e396b328131fa3"
+    },
+    {
+      "path": "submission_package/table14_alternative_inference_sensitivity.csv",
+      "bytes": 1308,
+      "sha256": "0ae9a502677fe190878057f6db85117448273ea27d1edaeb5944e6239e4bd9c1"
+    },
+    {
+      "path": "submission_package/table15_outcome_construction.csv",
+      "bytes": 865,
+      "sha256": "9e153c2fc9d97b76174b765c019dda979db319dee61ad3438221019bdaf15c6d"
     }
   ]
 }
