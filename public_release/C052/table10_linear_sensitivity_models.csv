@@ -1,0 +1,6 @@
+name,n,covariate,slope_per_10pp,ci_low,ci_high,p_value,adj_r2,se_type
+Primary inferential model: pre-COVID weighted linear model,221,coverage_m12_all,-3.073531039010564,-9.883022444343005,3.7359603663218777,0.37633716984326526,0.6730579820209728,cluster_jurisdiction
+Sensitivity: pooled eight-season weighted linear model,333,coverage_m12_all,-0.9219670350518705,-3.9622662651087786,2.1183321950050376,0.5522662669273909,0.6942138134838022,cluster_jurisdiction
+Sensitivity: unweighted linear model,333,coverage_m12_all,-0.661099391046025,-3.629736858045412,2.307538075953362,0.6624875478808074,0.5545241454646825,cluster_jurisdiction
+Sensitivity: ACS proxy-adjusted weighted linear model,333,coverage_m12_all,-0.37658536179166563,-4.047915148473029,3.294744424889698,0.8406623625463943,0.6914695336088452,cluster_jurisdiction
+Sensitivity: availability-IPW weighted linear model,333,coverage_m12_all,-0.6873740233660064,-3.452760346355631,2.0780122996236186,0.6261276570721737,0.6843483851865751,cluster_jurisdiction
