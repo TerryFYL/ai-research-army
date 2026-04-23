@@ -1,0 +1,36 @@
+{
+  "timestamp": "2026-04-23T16:47:32Z",
+  "repo_commit": "c8c776a152d54108a9db0bfc7467112e5df2d7a6",
+  "files": [
+    {
+      "path": "scripts/build_c052_package.py",
+      "bytes": 103638,
+      "sha256": "39d9527ed733da88c746499d80ddd981d28709e805750abbe18dfa94cd033731"
+    },
+    {
+      "path": "data/processed/analysis_ready.csv",
+      "bytes": 67379,
+      "sha256": "76b52efedaa4291e124972f786a1925e2ef931dc2a97f48b450e0744c722c49c"
+    },
+    {
+      "path": "submission_package/manuscript.md",
+      "bytes": 27415,
+      "sha256": "bc8d40fc8e617b26972bea31b74ed52fd58357d0b72838a64f6e8625ce1bff81"
+    },
+    {
+      "path": "submission_package/manuscript.docx",
+      "bytes": 486835,
+      "sha256": "3e432bcce1df11c5d0b6eb53a60bdd6f6fb485917ffeb0e2ab616761cb980ca8"
+    },
+    {
+      "path": "submission_package/title_page.md",
+      "bytes": 401,
+      "sha256": "03a9242a472c2f785b2f5b99a06e074e17cb669f1d50b20535040e89c02a1804"
+    },
+    {
+      "path": "submission_package/cover_letter.md",
+      "bytes": 1151,
+      "sha256": "608a22913963dabacdab353e9d379322693bdd15c48cee1f72a7b8a070759231"
+    }
+  ]
+}
