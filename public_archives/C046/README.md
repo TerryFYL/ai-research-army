@@ -1,6 +1,6 @@
-# C046 Public Analysis Archive
+# C046 Public Analysis-Plan Registration Record
 
-This directory publicly preserves the core pre-draft planning and reproducibility materials for project `C046`:
+This directory publicly preserves the core pre-draft planning and reproducibility materials for project `C046` as a time-stamped analysis-plan registration record.
 
 - Title: `Iron Deficiency Anaemia and Estimated Cardiorespiratory Fitness in US Adults Aged 20–49 Years: A Cross-Sectional Analysis of NHANES 1999–2004`
 - Project slug: `C046-TerryFengYilou-成人铁缺乏性贫血与运动耐-CT`
@@ -9,7 +9,7 @@ This directory publicly preserves the core pre-draft planning and reproducibilit
 
 ## What this archive is
 
-This is a public, time-stamped analysis-specification and reproducibility archive assembled from local project records that existed before final manuscript drafting.
+This is a public, time-stamped analysis-plan registration record and reproducibility archive assembled from local project records that existed before final manuscript drafting.
 
 It is intended to reduce ambiguity about:
 
@@ -28,7 +28,7 @@ During cleanup on `2026-04-24`, the local file `outputs/ming/analysis_plan.md` w
 
 That OSF identifier was checked via the public OSF API on `2026-04-24` and returned `404 Not found`, so this archive does **not** assert that a valid OSF preregistration already existed.
 
-Instead, this archive preserves the actual local planning artifacts and their filesystem timestamps.
+Instead, this archive preserves the actual local planning artifacts and their filesystem timestamps as the transparent public record for this submission draft.
 
 ## Key timestamps preserved from the local project
 
