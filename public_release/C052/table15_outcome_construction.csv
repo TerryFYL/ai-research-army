@@ -1,0 +1,6 @@
+step,field_or_formula,description,source
+weekly_observed_component,`number_of_deaths`,Observed weekly influenza-and-pneumonia deaths from the NCHS surveillance table.,NCHS u6jv-9ijr
+weekly_expected_component,`average_number_of_deaths`,Expected weekly benchmark deaths supplied in the same surveillance table rather than re-estimated locally.,NCHS u6jv-9ijr
+weekly_excess_component,`number_of_deaths - average_number_of_deaths`,Jurisdiction-week deviation from the table-provided benchmark.,Derived
+seasonal_aggregation,sum(weeks 40-20),"Observed, expected, and excess weekly values were summed over the same influenza-season window within each jurisdiction.",Derived
+primary_outcome,`100 * (sum(observed) - sum(expected)) / sum(expected)`,"Primary seasonal outcome interpreted as a surveillance benchmark contrast, not an age-standardised causal estimand.",Derived
