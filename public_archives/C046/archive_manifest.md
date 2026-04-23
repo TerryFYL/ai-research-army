@@ -3,6 +3,7 @@
 Included files:
 
 - `README.md`
+- `analysis_plan_registration_record.md`
 - `archive_manifest.md`
 - `requirement_v1.md`
 - `manifest.yaml`
@@ -19,5 +20,5 @@ Included files:
 Purpose of this archive:
 
 - preserve the project's pre-draft planning trail,
-- provide a public linkable record for review transparency,
+- provide a public, time-stamped analysis-plan registration record for review transparency,
 - expose the current reproducibility materials without overstating prospective preregistration.
