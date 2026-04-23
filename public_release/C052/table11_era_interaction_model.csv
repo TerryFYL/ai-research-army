@@ -1,0 +1,2 @@
+name,n,base_slope_per_10pp,base_ci_low,base_ci_high,base_p_value,interaction_delta_per_10pp,interaction_ci_low,interaction_ci_high,interaction_p_value,adj_r2,se_type
+Sensitivity: pooled weighted linear model with COVID-era interaction,333,-2.683357383552181,-6.63272876426622,1.2660139971618585,0.18295857251554182,2.2886202669735867,0.5265881207961807,4.050652413150992,0.010904282808983173,0.6956445129645182,cluster_jurisdiction
