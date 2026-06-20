@@ -66,10 +66,15 @@ load_hfpef(合成队列) ──▶ analysis_organ(table1/cox/km 真算) ──�
 
 - **不伪装真实性**：数据与文本在文件名、注释、稿件正文里均明确标注 **SYNTHETIC**，不冒充真实曙光数据或真实文献。
 - **引用不伪造**：占位 DOI + synthetic 标注；`citation_authenticity` 保持 NEEDS-REVIEW。
-- **统计真算可复现**：固定种子，纯 Python 真算，正文数字不手写编造。
+- **统计真算可复现 + 数字归代码**：固定种子、纯 Python 真算；写作细胞**只产散文 + 占位 token**，
+  一切数字由 `build_tokens/apply_tokens` 在代码侧回填——**写作模型从不接触原始数字，不可能篡改/编造**。
 - **客观验证**：完成与否由 `manuscript_audit` 判定。
 - **即插即用**：`MockLLM` 与 `AnthropicLLM` 接口一致——将来换真 Key 只需
-  `Context(llm=MockLLM())` → `Context(llm=AnthropicLLM())`，**管线结构一行不改**。
+  `Context(llm=MockLLM())` → `Context(llm=AnthropicLLM())`，**管线结构一行不改**（详见 `04-real-backend-handoff.md`）。
+
+> **真后端就绪**：本次已把"接线准备"做到位——数字归代码、draft 细胞指令可直接喂真 Claude、
+> 新增 `load_cohort_csv` 真数据适配器（与合成队列同形，已离线验证 Cox HR 逐位一致）。
+> 换真 LLM/真数据只改三处，见 [`04-real-backend-handoff.md`](./04-real-backend-handoff.md)。
 
 ## 六、验证命令（无回归）
 

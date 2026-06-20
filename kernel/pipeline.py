@@ -20,7 +20,7 @@ from __future__ import annotations
 from pathlib import Path
 
 from . import scientific_loop
-from .backends import COMPUTE_FNS, MockLLM
+from .backends import ALLOWED_TOKENS, COMPUTE_FNS, MockLLM, apply_tokens, build_tokens
 from .core import Context, Registry, compose, differentiate, stem_compute, stem_llm
 from .orchestrator import Orchestrator
 from validators import manuscript_audit
@@ -37,6 +37,19 @@ STUDY_META = {
     "outcome": "rehospitalization",
     "synthetic": True,
 }
+
+
+def make_narrative(meta: dict, stats: dict) -> dict:
+    """从真算 stats 派生**定性**叙事方向（不含原始数字）——供写作细胞写对方向。"""
+    cox = stats["cox"]["primary"]
+    return {
+        "exposure_label": meta.get("exposure", "the exposure"),
+        "reference_label": "usual care",
+        "outcome_label": meta.get("outcome", "the outcome"),
+        "direction": "lower" if cox["hr"] < 1 else "higher",
+        "significant": bool(cox["p"] < 0.05),
+        "synthetic": bool(meta.get("synthetic")),
+    }
 
 
 # ── 组合 wiring ───────────────────────────────────────────────────────────
@@ -61,14 +74,20 @@ SECTION_ORDER = [
 
 
 def writing_wiring(payload, members, ctx):
-    """写作器官：用 meta+stats 跑各 draft 细胞，按 IMRAD 顺序拼成 manuscript.md。"""
-    slim = {"meta": payload["meta"], "stats": payload["stats"]}
+    """写作器官：写作细胞产「散文+token」(无数字)，代码侧用真算 stats 回填 token，再按 IMRAD 拼装。
+
+    红线·数字归代码：稿件里每个数字都经 build_tokens/apply_tokens 由真算结果产生，
+    写作细胞（含将来的真 Claude）从不接触原始数字 → 不可能篡改或编造。
+    """
+    meta, stats = payload["meta"], payload["stats"]
+    nar = make_narrative(meta, stats)
+    slim = {"meta": meta, "narrative": nar}
     for cell in members:
         slim.update(cell.run(slim, ctx))
-    title = slim["sec_title"]
-    parts = ["# " + title]
+    tokens = build_tokens(stats)
+    parts = ["# " + apply_tokens(slim["sec_title"], tokens)]
     for key in SECTION_ORDER[1:]:
-        parts.append(slim[key])
+        parts.append(apply_tokens(slim[key], tokens))
     manuscript = "\n\n".join(parts).rstrip() + "\n"
     return {"manuscript": manuscript}
 
@@ -99,21 +118,45 @@ def build_pipeline(reg: Registry):
                              desc="组合统计细胞，输出 stats")
     analysis_organ.consumes, analysis_organ.produces = {"cohort"}, {"stats"}
 
-    # 语言干细胞 → 七个 draft 写作细胞（模板化，数字取自 stats）
+    # 语言干细胞 → 七个 draft 写作细胞（只写「散文 + token」，数字由代码回填）
+    # instruction 为**真模型可直接执行**的指令：MockLLM 读 task 分派；真 Claude 读 instruction。
+    base_rule = (
+        "You are drafting one section of a retrospective-cohort manuscript. Write only natural-language "
+        "prose. Do NOT write, compute, estimate or invent any numbers, sample sizes, statistics, "
+        "p-values, confidence intervals, percentages or citations. Where a number, the baseline table, "
+        "or an effect estimate belongs, insert the EXACT literal placeholder token (e.g. {{N_TOTAL}}); "
+        "verified computed values are substituted by code afterwards. Allowed tokens: "
+        + ", ".join(ALLOWED_TOKENS) + ". ")
     draft_specs = [
-        ("draft_title·标题", "draft_title", "sec_title"),
-        ("draft_abstract·摘要", "draft_abstract", "sec_abstract"),
-        ("draft_intro·引言", "draft_intro", "sec_intro"),
-        ("draft_results·结果(含Table1+HR/CI)", "draft_results", "sec_results"),
-        ("draft_discussion·讨论", "draft_discussion", "sec_discussion"),
-        ("draft_methods·方法", "draft_methods", "sec_methods"),
-        ("draft_declarations·必备声明", "draft_declarations", "sec_declarations"),
+        ("draft_title·标题", "draft_title", "sec_title",
+         "Write a concise title (<=66 characters, no abbreviations except HFpEF/LVEF/NT-proBNP, no "
+         "trailing period) that names the cohort design, exposure and outcome. Return only the title text."),
+        ("draft_abstract·摘要", "draft_abstract", "sec_abstract",
+         base_rule + "Write '## Abstract' then <=150 words, no reference markers; use tokens "
+         "{{N_TOTAL}}, {{N_EVENTS}}, {{ABSTRACT_EFFECT}} for all quantitative claims."),
+        ("draft_intro·引言", "draft_intro", "sec_intro",
+         base_rule + "Write '## Introduction': background, knowledge gap, and study aim. No numbers."),
+        ("draft_results·结果(含Table1+HR/CI)", "draft_results", "sec_results",
+         base_rule + "Write '## Results'; place {{TABLE1}} for the baseline table and use {{N_TOTAL}}, "
+         "{{N_EVENTS}}, {{MEDIAN_FU}}, {{LOGRANK}}, {{RESULTS_EFFECT}}; reference Table 1 and Figure 1."),
+        ("draft_discussion·讨论", "draft_discussion", "sec_discussion",
+         base_rule + "Write '## Discussion': interpretation, then an explicit limitations sentence; "
+         "avoid causal language for an observational design. No numbers."),
+        ("draft_methods·方法", "draft_methods", "sec_methods",
+         base_rule + "Write '## Methods' (<=3000 words): design, exposure/outcome definitions, "
+         "censoring, and the statistical tests (Welch t, Mann-Whitney, chi-square, Kaplan-Meier, "
+         "log-rank, multivariable Cox with HR+95%CI). Use {{N_TOTAL}} for the cohort size only."),
+        ("draft_declarations·必备声明", "draft_declarations", "sec_declarations",
+         base_rule + "Emit '## Figure legends' (Figure 1 KM legend with {{LOGRANK}}), '## References' "
+         "(numbered; every entry MUST carry a DOI; never fabricate a real DOI — use a clearly-marked "
+         "placeholder if unknown), and the statements: Data availability, Code availability, Author "
+         "contributions, Ethics, Funding."),
     ]
     draft_cells = []
-    for name, task, produces in draft_specs:
-        cell = diff(llm, name, {"task": task, "instruction": f"撰写 {produces} 章节"},
-                    consumes=["meta", "stats"], produces=[produces],
-                    desc="模板化生成稿件章节（SYNTHETIC）")
+    for name, task, produces, instruction in draft_specs:
+        cell = diff(llm, name, {"task": task, "instruction": instruction},
+                    consumes=["meta", "narrative"], produces=[produces],
+                    desc="写作细胞：散文+token（数字归代码，SYNTHETIC）")
         draft_cells.append(cell)
 
     # 组合：七个写作细胞 → 写作器官（产出 manuscript）

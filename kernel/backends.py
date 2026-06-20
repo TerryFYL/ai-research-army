@@ -136,57 +136,108 @@ def _pct(k, n):
     return f"{(100.0 * k / n):.1f}" if n else "NA"
 
 
-class MockLLM:
-    """离线确定性「写作」LLM 替身（⚠️ SYNTHETIC：模板化生成，非真实模型创作）。
+# ── 数字归代码：统计量 → token 渲染（写作细胞碰不到原始数字，故无法篡改/编造） ──
+def render_table1_md(t1: dict) -> str:
+    """把真算 Table 1 渲染成 markdown 表（数字唯一真源）。"""
+    a, b = t1["arms"][0], t1["arms"][1]
+    head = f"| Characteristic | {a} (n={t1['n'][a]}) | {b} (n={t1['n'][b]}) | P |"
+    sep = "| --- | --- | --- | --- |"
+    body = "\n".join(
+        f"| {r['label']} | {r[a]} | {r[b]} | {r['p']} |" for r in t1["rows"])
+    return "\n".join([
+        "**Table 1.** Baseline characteristics, treatment and outcomes by group.",
+        "", head, sep, body])
 
-    红线·不伪装真实性：
-      - 本类把「研究元数据 + 真算统计结果」**模板化**成各稿件章节，所产文本是合成的，
-        不得宣称为真实模型创作或真实临床证据；正文每个数字均来自 biostats 真算结果。
-      - 参考文献使用**明确占位 DOI**（10.0000/mock.NNN），审核器据此判 NEEDS-REVIEW，绝不伪绿。
+
+def build_tokens(stats: dict) -> dict:
+    """构造 token→真值映射。所有进入稿件的数字**只**经此处产生（红线：真算可复现，不编造）。"""
+    cox = stats["cox"]["primary"]
+    km = stats["km"]
+    return {
+        "{{N_TOTAL}}": str(stats["n_total"]),
+        "{{N_EVENTS}}": str(stats["cox"]["events"]),
+        "{{MEDIAN_FU}}": km["median_followup_s"],
+        "{{TABLE1}}": render_table1_md(stats["table1"]),
+        "{{ABSTRACT_EFFECT}}": (
+            f"an adjusted hazard ratio of {cox['hr_s']} "
+            f"(95% CI {cox['ci_low_s']}-{cox['ci_high_s']})"),
+        "{{RESULTS_EFFECT}}": (
+            f"adjusted hazard ratio {cox['hr_s']}, "
+            f"95% CI {cox['ci_low_s']}-{cox['ci_high_s']}; P {cox['p_phrase']}"),
+        "{{LOGRANK}}": f"log-rank P {km['logrank_p_phrase']}",
+    }
+
+
+def apply_tokens(text: str, tokens: dict) -> str:
+    for k, v in tokens.items():
+        text = text.replace(k, v)
+    return text
+
+
+# 真模型可用的 token 清单（写进 draft 细胞指令；真 Claude 只许写散文 + 插入这些 token）
+ALLOWED_TOKENS = [
+    "{{N_TOTAL}}", "{{N_EVENTS}}", "{{MEDIAN_FU}}", "{{TABLE1}}",
+    "{{ABSTRACT_EFFECT}}", "{{RESULTS_EFFECT}}", "{{LOGRANK}}",
+]
+
+
+class MockLLM:
+    """离线确定性「写作」LLM 替身（⚠️ SYNTHETIC：模板化散文，非真实模型创作）。
+
+    数字归代码：本类**只产散文 + token 占位符**（如 {{TABLE1}}、{{RESULTS_EFFECT}}），
+    一切真实数字由 build_tokens/apply_tokens 在代码侧回填——写作细胞从不接触原始统计量，
+    因此**无法篡改或编造数字**（医学零容错红线）。占位 DOI 由 declarations 细胞输出，
+    审核器据此判 citation_authenticity = NEEDS-REVIEW，绝不伪绿。
 
     即插即用：接口与 AnthropicLLM 完全一致（complete(prompt) -> str，返回 JSON 字符串）。
-    与 StubLLM 同构——读 TASK 标签分派、读 PAYLOAD（含 meta/stats）模板化、按 produces 键回填 JSON。
-    将来换真 Key：把 Context(llm=MockLLM()) 改成 Context(llm=AnthropicLLM())，语言细胞代码一行不改。
+    与 StubLLM 同构——读 TASK 分派、读 PAYLOAD（meta + narrative，**不含原始数字**）、按 produces 键回填。
+    换真 Key：Context(llm=MockLLM()) → Context(llm=AnthropicLLM())，语言细胞代码一行不改；
+    真模型读 INSTRUCTION（见 pipeline 的 draft 指令）写同样"散文+token"，数字仍由代码回填。
     """
 
     def complete(self, prompt: str) -> str:
         task = _tag(prompt, "TASK")
         payload = json.loads(_tag(prompt, "PAYLOAD") or "{}")
         meta = payload.get("meta", {})
-        stats = payload.get("stats", {})
+        nar = payload.get("narrative", {})
         handler = getattr(self, f"_t_{task}", None)
         if handler is None:
             return json.dumps({"result": "mock-noop"}, ensure_ascii=False)
-        key, text = handler(meta, stats)
+        key, text = handler(meta, nar)
         return json.dumps({key: text}, ensure_ascii=False)
 
-    # 每个 _t_<task> 返回 (produces_key, markdown 文本)
-    def _t_draft_title(self, meta, stats):
+    # 每个 _t_<task>(meta, narrative) 返回 (produces_key, 含 token 的散文)；不含任何原始数字
+    def _t_draft_title(self, meta, nar):
+        disease = meta.get("disease", "the cohort")
         # 末尾故意留一个句点（拟真首稿瑕疵）→ 交给科学循环 fix_title 收敛
         return "sec_title", (
-            "A retrospective cohort study of guideline-directed therapy and "
-            "rehospitalization in patients with HFpEF.")
+            f"A retrospective cohort study of {nar.get('exposure_label', 'the exposure')} "
+            f"and {nar.get('outcome_label', 'outcomes')} in patients with {disease}.")
 
-    def _t_draft_abstract(self, meta, stats):
-        cox = stats["cox"]["primary"]
-        n = stats["n_total"]
-        ev = stats["cox"]["events"]
-        # 摘要内出现的小数严格限定为 HR 与 CI（且与 Results 完全一致）→ 保证 internal_consistency。
+    def _t_draft_abstract(self, meta, nar):
+        syn = "synthetic " if nar.get("synthetic") else ""
+        exp = nar.get("exposure_label", "the exposure")
+        out = nar.get("outcome_label", "the outcome")
+        caveat = (" These synthetic findings illustrate an end-to-end analytic pipeline and "
+                  "should not be interpreted as clinical evidence." if nar.get("synthetic") else "")
         # 故意夹一个文献标记 [1]（拟真首稿瑕疵）→ 交给 fix_abstract_citation 收敛。
         text = (
             f"Heart failure with preserved ejection fraction is common and carries a high "
-            f"rehospitalization burden. In this synthetic retrospective cohort study we analysed "
-            f"{n} patients with HFpEF to evaluate whether guideline-directed therapy was associated "
-            f"with rehospitalization-free survival [1]. Patients were grouped by treatment strategy "
-            f"and followed for up to thirty-six months, with {ev} rehospitalization events observed. "
-            f"In a Cox proportional-hazards model adjusted for age, sex, comorbidities, natriuretic "
-            f"peptide and ejection fraction, guideline-directed therapy was associated with a lower "
-            f"hazard of rehospitalization, with an adjusted hazard ratio of {cox['hr_s']} "
-            f"(95% CI {cox['ci_low_s']}-{cox['ci_high_s']}). These synthetic findings illustrate an "
-            f"end-to-end analytic pipeline and should not be interpreted as clinical evidence.")
+            f"{out} burden. In this {syn}retrospective cohort study we analysed {{{{N_TOTAL}}}} "
+            f"patients with HFpEF to evaluate whether {exp} was associated with {out}-free "
+            f"survival [1]. Patients were grouped by treatment strategy and followed for up to "
+            f"thirty-six months, with {{{{N_EVENTS}}}} {out} events observed. After adjustment for "
+            f"age, sex, comorbidities, natriuretic peptide and ejection fraction, {exp} was "
+            f"associated with a {nar.get('direction', 'different')} hazard of {out}, with "
+            f"{{{{ABSTRACT_EFFECT}}}}.{caveat}")
         return "sec_abstract", "## Abstract\n" + text
 
-    def _t_draft_intro(self, meta, stats):
+    def _t_draft_intro(self, meta, nar):
+        tail = ("In this work we use a fully synthetic, deterministically generated cohort to "
+                "demonstrate an automated analytic pipeline that proceeds from cohort data to a "
+                "submission-ready manuscript; the clinical narrative is illustrative only."
+                if nar.get("synthetic") else
+                "Here we report a retrospective cohort analysis addressing this question.")
         text = (
             "Heart failure with preserved ejection fraction (HFpEF) accounts for approximately half "
             "of all heart failure cases and is associated with frequent hospital readmission and poor "
@@ -194,61 +245,58 @@ class MockLLM:
             "value of routinely available variables such as natriuretic peptides and ejection fraction "
             "is incompletely characterised in real-world cohorts. Whether guideline-directed therapy is "
             "associated with a lower burden of rehospitalization in HFpEF is of particular interest "
-            "because management options have historically been limited. In this work we use a fully "
-            "synthetic, deterministically generated cohort to demonstrate an automated analytic pipeline "
-            "that proceeds from cohort data to a submission-ready manuscript; the clinical narrative is "
-            "illustrative only.")
+            "because management options have historically been limited. " + tail)
         return "sec_intro", "## Introduction\n" + text
 
-    def _t_draft_results(self, meta, stats):
-        cox = stats["cox"]["primary"]
-        km = stats["km"]
-        t1 = stats["table1"]
-        n = stats["n_total"]
-        ev = stats["cox"]["events"]
-        # Table 1（渲染为 markdown 表）—— 数字全部来自 biostats 真算
-        head = f"| Characteristic | {t1['arms'][0]} (n={t1['n'][t1['arms'][0]]}) | {t1['arms'][1]} (n={t1['n'][t1['arms'][1]]}) | P |"
-        sep = "| --- | --- | --- | --- |"
-        body = "\n".join(
-            f"| {r['label']} | {r[t1['arms'][0]]} | {r[t1['arms'][1]]} | {r['p']} |"
-            for r in t1["rows"])
-        table = "\n".join([
-            "**Table 1.** Baseline characteristics, treatment and outcomes by group (synthetic cohort).",
-            "", head, sep, body])
+    def _t_draft_results(self, meta, nar):
+        exp = nar.get("exposure_label", "the exposure")
+        ref = nar.get("reference_label", "the comparator")
+        out = nar.get("outcome_label", "the outcome")
         text = (
-            f"Among {n} patients with HFpEF, {ev} rehospitalization events were observed over a median "
-            f"follow-up of {km['median_followup_s']} months. Baseline characteristics by treatment group "
-            f"are summarised in **Table 1**.\n\n"
-            f"{table}\n\n"
-            f"In the Kaplan-Meier analysis, rehospitalization-free survival was higher in the "
-            f"guideline-directed therapy group than in the usual-care group "
-            f"(log-rank P {km['logrank_p_phrase']}; **Figure 1**). In the multivariable Cox "
-            f"proportional-hazards model, guideline-directed therapy was independently associated with a "
-            f"lower hazard of rehospitalization (adjusted hazard ratio {cox['hr_s']}, "
-            f"95% CI {cox['ci_low_s']}-{cox['ci_high_s']}; P {cox['p_phrase']}). Higher baseline natriuretic "
-            f"peptide and chronic kidney disease were associated with higher hazards (Table 1).")
+            f"Among {{{{N_TOTAL}}}} patients with HFpEF, {{{{N_EVENTS}}}} {out} events were observed "
+            f"over a median follow-up of {{{{MEDIAN_FU}}}} months. Baseline characteristics by "
+            f"treatment group are summarised in **Table 1**.\n\n"
+            f"{{{{TABLE1}}}}\n\n"
+            f"In the Kaplan-Meier analysis, {out}-free survival was higher in the {exp} group than in "
+            f"the {ref} group ({{{{LOGRANK}}}}; **Figure 1**). In the multivariable Cox "
+            f"proportional-hazards model, {exp} was independently associated with a "
+            f"{nar.get('direction', 'different')} hazard of {out} ({{{{RESULTS_EFFECT}}}}). Higher "
+            f"baseline natriuretic peptide and chronic kidney disease were associated with higher "
+            f"hazards (Table 1).")
         return "sec_results", "## Results\n" + text
 
-    def _t_draft_discussion(self, meta, stats):
-        text = (
-            "In this synthetic retrospective cohort, guideline-directed therapy was associated with "
-            "longer rehospitalization-free survival after adjustment for major prognostic factors. The "
-            "direction and magnitude of the association are consistent with the data-generating process "
-            "and serve to validate the analytic pipeline end to end. Because the cohort is entirely "
-            "synthetic, the findings carry no clinical implication and are not generalisable to real "
-            "patients. Limitations include the single synthetic data source, the absence of real-world "
-            "measurement error and missingness, potential residual confounding inherent to observational "
-            "designs, and the use of a simplified proportional-hazards data-generating model that may "
-            "introduce bias toward the assumed effect direction. Prospective validation on real data is "
-            "required before any inference can be drawn.")
+    def _t_draft_discussion(self, meta, nar):
+        if nar.get("synthetic"):
+            text = (
+                "In this synthetic retrospective cohort, guideline-directed therapy was associated with "
+                "longer rehospitalization-free survival after adjustment for major prognostic factors. "
+                "The direction and magnitude of the association are consistent with the data-generating "
+                "process and serve to validate the analytic pipeline end to end. Because the cohort is "
+                "entirely synthetic, the findings carry no clinical implication and are not generalisable "
+                "to real patients. Limitations include the single synthetic data source, the absence of "
+                "real-world measurement error and missingness, potential residual confounding inherent to "
+                "observational designs, and the use of a simplified proportional-hazards data-generating "
+                "model that may bias toward the assumed effect direction. Prospective validation on real "
+                "data is required before any inference can be drawn.")
+        else:
+            text = (
+                "In this retrospective cohort, guideline-directed therapy was associated with longer "
+                "rehospitalization-free survival after adjustment for major prognostic factors. "
+                "Limitations include the retrospective single-source design, potential residual "
+                "confounding, and the absence of randomisation; associations should not be interpreted "
+                "as causal. Prospective validation is warranted.")
         return "sec_discussion", "## Discussion\n" + text
 
-    def _t_draft_methods(self, meta, stats):
-        n = stats["n_total"]
+    def _t_draft_methods(self, meta, nar):
+        if nar.get("synthetic"):
+            origin = ("a fully synthetic HFpEF dataset comprising {{N_TOTAL}} patients generated "
+                      "deterministically in software with a fixed random seed; no real patients, "
+                      "hospitals or medical records were involved")
+        else:
+            origin = ("an HFpEF retrospective cohort comprising {{N_TOTAL}} patients assembled from "
+                      "the source registry")
         text = (
-            f"This was a retrospective cohort analysis of a fully synthetic HFpEF dataset comprising "
-            f"{n} patients generated deterministically in software with a fixed random seed; no real "
-            f"patients, hospitals or medical records were involved. The exposure of interest was "
+            f"This was a retrospective cohort analysis of {origin}. The exposure of interest was "
             f"guideline-directed therapy (versus usual care). The primary outcome was rehospitalization, "
             f"analysed as time to first event with administrative censoring at thirty-six months and "
             f"censoring at death or loss to follow-up. Baseline characteristics were compared between "
@@ -257,18 +305,33 @@ class MockLLM:
             f"categorical variables. Rehospitalization-free survival was estimated with the Kaplan-Meier "
             f"method and compared with the log-rank test. A multivariable Cox proportional-hazards model "
             f"(Breslow approximation for ties) adjusted for age, sex, diabetes, atrial fibrillation, "
-            f"chronic kidney disease, natriuretic peptide and ejection fraction; effect sizes are reported "
-            f"as hazard ratios with 95% confidence intervals. All statistics were computed in dependency-"
-            f"free Python and are exactly reproducible from the released code and seed.")
+            f"chronic kidney disease, natriuretic peptide and ejection fraction; effect sizes are "
+            f"reported as hazard ratios with 95% confidence intervals. All statistics were computed in "
+            f"dependency-free Python and are exactly reproducible from the released code and seed.")
         return "sec_methods", "## Methods\n" + text
 
-    def _t_draft_declarations(self, meta, stats):
-        km = stats["km"]
+    def _t_draft_declarations(self, meta, nar):
+        syn = nar.get("synthetic")
+        data_avail = (
+            "This study is a methodological pipeline demonstration built on a fully synthetic cohort "
+            "generated deterministically by code with a fixed random seed; no real patient data were "
+            "used. The synthetic dataset and the code that generates it are openly available in the "
+            "project repository and can be regenerated exactly by running the released pipeline."
+            if syn else
+            "The data that support the findings are available from the corresponding author upon "
+            "reasonable request, subject to institutional and ethical restrictions on patient data.")
+        ethics = (
+            "This study used a fully synthetic, computer-generated cohort; no human participants, tissue "
+            "or identifiable data were involved, so institutional review board approval and informed "
+            "consent were not applicable and were waived."
+            if syn else
+            "The study was approved by the institutional review board; informed consent was waived for "
+            "this retrospective analysis of de-identified records.")
         blocks = [
             "## Figure legends",
-            f"**Figure 1.** Kaplan-Meier curves for rehospitalization-free survival by treatment group "
-            f"(guideline-directed therapy versus usual care) in the synthetic HFpEF cohort, with the "
-            f"number-at-risk table below each curve; the log-rank P value is {km['logrank_p_s']}.",
+            "**Figure 1.** Kaplan-Meier curves for rehospitalization-free survival by treatment group "
+            "(guideline-directed therapy versus usual care), with the number-at-risk table below each "
+            "curve; {{LOGRANK}}.",
             "",
             "## References",
             # 占位 DOI（10.0000/mock.NNN）+ 明确标注 synthetic：审核器据此判 NEEDS-REVIEW，绝不伪绿。
@@ -282,10 +345,7 @@ class MockLLM:
             "real publication). J Synthetic Cardiol. 2024. https://doi.org/10.0000/mock.004",
             "",
             "## Data availability",
-            "This study is a methodological pipeline demonstration built on a fully synthetic cohort "
-            "generated deterministically by code with a fixed random seed; no real patient data were "
-            "used. The synthetic dataset and the code that generates it are openly available in the "
-            "project repository and can be regenerated exactly by running the released pipeline.",
+            data_avail,
             "",
             "## Code availability",
             "All analysis code (cohort generation, statistics and manuscript assembly) is custom and is "
@@ -296,9 +356,7 @@ class MockLLM:
             "the manuscript; a human investigator supervised and is responsible for the final content.",
             "",
             "## Ethics",
-            "This study used a fully synthetic, computer-generated cohort; no human participants, tissue "
-            "or identifiable data were involved, so institutional review board approval and informed "
-            "consent were not applicable and were waived.",
+            ethics,
             "",
             "## Funding",
             "This work received no specific external funding.",
@@ -419,8 +477,60 @@ def fn_load_hfpef_cohort(payload, cond):
     return {"cohort": rows, "dataset": "synthetic_hfpef_cohort", "seed": seed}
 
 
-def _split_by_arm(cohort):
-    arms = ["GDT", "Usual"]
+# 真实队列 CSV schema：列名 → 类型（真后端接线时，把曙光导出的 CSV 对齐到这些列即可）
+COHORT_CSV_SCHEMA = {
+    "pid": "str", "arm": "str", "age": "num", "sex": "str",
+    "hypertension": "bool", "diabetes": "bool", "af": "bool", "ckd": "bool",
+    "lvef": "num", "ntprobnp": "num",
+    "rehospitalization": "bool", "death": "bool", "followup_months": "num",
+}
+_TRUE = {"1", "true", "yes", "y", "t", "是"}
+
+
+def _coerce(val, typ):
+    s = str(val).strip()
+    if typ == "bool":
+        return s.lower() in _TRUE
+    if typ == "num":
+        f = float(s)
+        return int(f) if f.is_integer() else f
+    return s
+
+
+def fn_load_cohort_csv(payload, cond):
+    """计算细胞：从真实队列 CSV 载入（真后端用；与合成队列**同形**，故管线下游一行不改）。
+
+    用法：分化时给 fn=load_cohort_csv + path=<csv路径>；CSV 列须覆盖 COHORT_CSV_SCHEMA。
+    sex 取值 'female'/'male'；arm 为任意两类标签（暴露组可在统计细胞用 exposure_arm 指定）。
+    ⚠️ 真实患者数据敏感：放 clients/（已 gitignore），绝不入库。
+    """
+    import csv
+    path = cond.get("path") or payload.get("cohort_csv")
+    if not path:
+        raise KeyError("fn_load_cohort_csv 需要 cond['path'] 或 payload['cohort_csv']")
+    rows = []
+    with open(path, newline="", encoding="utf-8") as fh:
+        for raw in csv.DictReader(fh):
+            missing = [c for c in COHORT_CSV_SCHEMA if c not in raw]
+            if missing:
+                raise ValueError(f"CSV 缺列：{missing}（需符合 COHORT_CSV_SCHEMA）")
+            rows.append({c: _coerce(raw[c], t) for c, t in COHORT_CSV_SCHEMA.items()})
+    if not rows:
+        raise ValueError(f"CSV 无数据行：{path}")
+    return {"cohort": rows, "dataset": f"real_cohort_csv:{path}"}
+
+
+def _split_by_arm(cohort, exposure=None):
+    """按 arm 分两组（label-agnostic：真实数据可用任意两类标签）。
+    exposure 指定则置于首位（=Cox 暴露、Table 1 首列）；否则按字典序。"""
+    distinct = sorted({r["arm"] for r in cohort})
+    if len(distinct) != 2:
+        raise ValueError(f"需要恰好两个 arm，实际：{distinct}")
+    if exposure and exposure in distinct:
+        other = [x for x in distinct if x != exposure][0]
+        arms = [exposure, other]
+    else:
+        arms = distinct
     groups = {a: [r for r in cohort if r["arm"] == a] for a in arms}
     return arms, groups
 
@@ -428,7 +538,7 @@ def _split_by_arm(cohort):
 def fn_table1(payload, cond):
     """计算细胞：基线/结局描述表（真算，含组间检验 p）。"""
     cohort = payload["cohort"]
-    arms, g = _split_by_arm(cohort)
+    arms, g = _split_by_arm(cohort, cond.get("exposure_arm"))
     a, b = arms
     labels = cohort
     rows = []
@@ -489,15 +599,20 @@ def _zscore(vals):
 def fn_cox(payload, cond):
     """计算细胞：多变量 Cox 比例风险（真算，主结果给 HR + 95% CI）。"""
     cohort = payload["cohort"]
-    times = [r["followup_months"] for r in cohort]
-    events = [1 if r["rehospitalization"] else 0 for r in cohort]
+    time_key = cond.get("time_key", "followup_months")
+    event_key = cond.get("event_key", "rehospitalization")
+    arms, _ = _split_by_arm(cohort, cond.get("exposure_arm"))
+    exposure = arms[0]
+    times = [r[time_key] for r in cohort]
+    events = [1 if r[event_key] else 0 for r in cohort]
     age_z, _, _ = _zscore([r["age"] for r in cohort])
     lognt_z, _, _ = _zscore([math.log(r["ntprobnp"]) for r in cohort])
     lvef_z, _, _ = _zscore([r["lvef"] for r in cohort])
+    arm_name = f"arm_{exposure}"
     X = []
     for i, r in enumerate(cohort):
         X.append([
-            1.0 if r["arm"] == "GDT" else 0.0,   # 暴露：GDT vs Usual
+            1.0 if r["arm"] == exposure else 0.0,   # 暴露 vs 参照
             age_z[i],
             1.0 if r["sex"] == "female" else 0.0,
             1.0 if r["diabetes"] else 0.0,
@@ -506,18 +621,18 @@ def fn_cox(payload, cond):
             lognt_z[i],
             lvef_z[i],
         ])
-    names = ["arm_GDT", "age_z", "female", "diabetes", "af", "ckd", "lognt_z", "lvef_z"]
+    names = [arm_name, "age_z", "female", "diabetes", "af", "ckd", "lognt_z", "lvef_z"]
     label_map = {
-        "arm_GDT": "Guideline-directed therapy (vs usual care)",
+        arm_name: f"{exposure} (vs {arms[1]})",
         "age_z": "Age (per SD)", "female": "Female sex",
         "diabetes": "Diabetes", "af": "Atrial fibrillation",
         "ckd": "Chronic kidney disease", "lognt_z": "log NT-proBNP (per SD)",
         "lvef_z": "LVEF (per SD)",
     }
     fit = biostats.cox_ph(times, events, X, names)
-    pr = fit["arm_GDT"]
+    pr = fit[arm_name]
     primary = {
-        "name": "arm_GDT",
+        "name": arm_name, "exposure": exposure, "reference": arms[1],
         "hr": pr["hr"], "ci_low": pr["ci_low"], "ci_high": pr["ci_high"], "p": pr["p"],
         "hr_s": _f2(pr["hr"]), "ci_low_s": _f2(pr["ci_low"]),
         "ci_high_s": _f2(pr["ci_high"]), "p_s": _p_str(pr["p"]), "p_phrase": _p_phrase(pr["p"]),
@@ -538,11 +653,14 @@ def fn_cox(payload, cond):
 def fn_km(payload, cond):
     """计算细胞：Kaplan-Meier 生存 + log-rank（真算）。"""
     cohort = payload["cohort"]
-    times = [r["followup_months"] for r in cohort]
-    events = [1 if r["rehospitalization"] else 0 for r in cohort]
+    time_key = cond.get("time_key", "followup_months")
+    event_key = cond.get("event_key", "rehospitalization")
+    arms, _ = _split_by_arm(cohort, cond.get("exposure_arm"))
+    times = [r[time_key] for r in cohort]
+    events = [1 if r[event_key] else 0 for r in cohort]
     groups = [r["arm"] for r in cohort]
     by_arm = {}
-    for arm in ("GDT", "Usual"):
+    for arm in arms:
         idx = [i for i, gname in enumerate(groups) if gname == arm]
         steps = biostats.kaplan_meier([times[i] for i in idx], [events[i] for i in idx])
         med = biostats.km_median(steps)
@@ -569,6 +687,7 @@ COMPUTE_FNS = {
     "normality": fn_normality,
     # HFpEF 合成队列 + 真算统计
     "load_hfpef_cohort": fn_load_hfpef_cohort,
+    "load_cohort_csv": fn_load_cohort_csv,   # 真后端：从真实队列 CSV 载入（同形即插即用）
     "table1": fn_table1,
     "cox": fn_cox,
     "km": fn_km,
