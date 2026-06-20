@@ -4,10 +4,12 @@
 # 标准会随期刊改版过期 —— 见 meta.recheck。
 
 meta:
-  journal: Nature
+  journal: "Nature Cardiovascular Research (Nature Portfolio)"
+  fallback_journal: "Communications Medicine（同门，更易接收，沿用同套标准）"
   study_type: retrospective_cohort
   version: "2026-06-20"
-  recheck: "目标期刊作者须知每季度重抓；STROBE/ICMJE 版本变更时重编"
+  inheritance: "NCVR 沿用 Nature Portfolio 的格式/报告标准；带 (inherited) 的条目以 Nature 通用值暂填，需在 NCVR 投稿指南页核实"
+  recheck: "目标子刊作者须知每季度重抓；STROBE/ICMJE 版本变更时重编"
   done_definition:
     合格: "所有 hard_gates 条目 pass（二值），等价于不会因格式/完整性/诚信被 desk-reject"
     高质量: "quality_scores 加权得分 ≥ 0.8"
@@ -19,11 +21,11 @@ hard_gates:
   # L1 期刊范围与政策（Nature 官网，硬约束）
   - id: scope_fit
     layer: L1
-    requirement: "研究主题/新颖性符合 Nature 旗舰刊范围（编辑部初筛）"
+    requirement: "研究主题/新颖性符合 Nature Cardiovascular Research 范围（含临床/观察性研究；编辑部初筛）"
     check: manual
     criterion: "通过编辑部 scope 初筛"
-    flag: "⚠️ 单中心回顾性 HF 队列大概率不契合 Nature 旗舰；建议改投 Nature Medicine / Nature Cardiovascular Research / Nature Communications"
-    source: nature_initial_submission
+    note: "✅ 红旗已解：NCVR 明确收录心血管临床/观察性研究，并要求队列研究按 STROBE 报告。仍高度选择，需突出新颖性/临床意义；更易接收的同门备选=Communications Medicine"
+    source: natcardiovascres_aims
   - id: title_format
     layer: L1
     requirement: "标题简洁、无缩写、无标点，约 ≤66 字符"
@@ -44,10 +46,10 @@ hard_gates:
     source: nature_formatting
   - id: main_text_wordlimit
     layer: L1
-    requirement: "正文 ≤3,500 词（不含摘要/方法/图注/参考）"
+    requirement: "正文 ≤4,500 词（不含摘要/方法/图注/参考）"
     check: auto
-    criterion: "words(main)≤3500"
-    source: nature_formatting
+    criterion: "words(main)≤4500"
+    source: natcardiovascres_formatting
   - id: methods_wordlimit
     layer: L1
     requirement: "方法 ≤ ~3,000 词"
@@ -221,8 +223,10 @@ quality_scores:
     weight: 0.15
 
 sources:
-  nature_formatting: "https://www.nature.com/nature/for-authors/formatting-guide"
-  nature_initial_submission: "https://www.nature.com/nature/for-authors/initial-submission"
+  natcardiovascres_aims: "https://www.nature.com/natcardiovascres/aims"
+  natcardiovascres_formatting: "https://www.nature.com/natcardiovascres/submission-guidelines/aip-and-formatting"
+  natcardiovascres_clinical: "https://www.nature.com/natcardiovascres/editorial-policies/clinical-research"
+  nature_formatting: "https://www.nature.com/nature/for-authors/formatting-guide"   # inherited 项的通用来源
   nature_reporting_standards: "https://www.nature.com/nature/editorial-policies/reporting-standards"
   strobe: "https://www.equator-network.org/reporting-guidelines/strobe/"
   icmje: "https://www.icmje.org/recommendations/browse/manuscript-preparation/preparing-for-submission.html"

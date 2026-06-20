@@ -106,8 +106,8 @@
 | `genesis-developmental-program.md` | 按什么顺序长？通用性何时涌现？ |
 | `emergence-critical-mass.md` | 为什么是"量"的问题？怎么更快到临界？ |
 | `manuscript-standard-methodology.md` | "高质量完成"如何定义？标准从哪找？何时可结束？ |
-| `nature-cohort-audit-checklist.md` | Nature×回顾队列的完成定义实例（29硬闸门+5质量分） |
-| `kernel/`（已跑通） | 上述机制的可运行证据 |
+| `nature-cohort-audit-checklist.md` | NCVR×回顾队列完成定义 + 已跑通的审核验证器 |
+| `kernel/` · `validators/manuscript_audit.py`（已跑通） | 机制与验证器的可运行证据 |
 
 ---
 
