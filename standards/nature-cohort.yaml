@@ -1,0 +1,228 @@
+# Nature × 回顾性队列 · 投稿基础稿审核清单（机器可读）
+# 由 manuscript-standard-methodology.md 的四层源头编制；每条可客观验证。
+# check: auto=可自动探针 / manual=需人工 / semi=自动初判+人工复核
+# 标准会随期刊改版过期 —— 见 meta.recheck。
+
+meta:
+  journal: Nature
+  study_type: retrospective_cohort
+  version: "2026-06-20"
+  recheck: "目标期刊作者须知每季度重抓；STROBE/ICMJE 版本变更时重编"
+  done_definition:
+    合格: "所有 hard_gates 条目 pass（二值），等价于不会因格式/完整性/诚信被 desk-reject"
+    高质量: "quality_scores 加权得分 ≥ 0.8"
+  redline: "验证从稿件/数据客观量出；引用真实性靠跨库核对；禁止模型自判自作业"
+
+# ── 硬闸门：全过才算"合格/可投" ──────────────────────────────
+hard_gates:
+
+  # L1 期刊范围与政策（Nature 官网，硬约束）
+  - id: scope_fit
+    layer: L1
+    requirement: "研究主题/新颖性符合 Nature 旗舰刊范围（编辑部初筛）"
+    check: manual
+    criterion: "通过编辑部 scope 初筛"
+    flag: "⚠️ 单中心回顾性 HF 队列大概率不契合 Nature 旗舰；建议改投 Nature Medicine / Nature Cardiovascular Research / Nature Communications"
+    source: nature_initial_submission
+  - id: title_format
+    layer: L1
+    requirement: "标题简洁、无缩写、无标点，约 ≤66 字符"
+    check: auto
+    criterion: "len(title)≤66 且 无缩写/标点"
+    source: nature_formatting
+  - id: abstract_format
+    layer: L1
+    requirement: "摘要约 150 词、不加文献引用"
+    check: auto
+    criterion: "120≤words≤170 且 无引用标记"
+    source: nature_formatting
+  - id: imrad_structure
+    layer: L1
+    requirement: "正文结构 Introduction → Results → Discussion → Methods"
+    check: auto
+    criterion: "四个标准节标题按序存在"
+    source: nature_formatting
+  - id: main_text_wordlimit
+    layer: L1
+    requirement: "正文 ≤3,500 词（不含摘要/方法/图注/参考）"
+    check: auto
+    criterion: "words(main)≤3500"
+    source: nature_formatting
+  - id: methods_wordlimit
+    layer: L1
+    requirement: "方法 ≤ ~3,000 词"
+    check: auto
+    criterion: "words(methods)≤3000"
+    source: nature_formatting
+  - id: display_items
+    layer: L1
+    requirement: "图+表合计 ≤6 项（指导值）"
+    check: auto
+    criterion: "n_figures + n_tables ≤ 6"
+    source: nature_formatting
+  - id: references_count_style
+    layer: L1
+    requirement: "参考 ≤50 条（方法专属引用不计）；Nature 上标数字制"
+    check: auto
+    criterion: "n_refs(excl methods)≤50 且 引用为上标数字顺序制"
+    source: nature_formatting
+  - id: figure_legends
+    layer: L1
+    requirement: "每条图注 ≤ ~300–350 词，含全图标题+各分图说明"
+    check: auto
+    criterion: "每条 legend words ≤350"
+    source: nature_formatting
+  - id: figure_specs
+    layer: L1
+    requirement: "图 90mm(单栏)/180mm(双栏)，TIFF/JPEG/PNG，≥300dpi，标签 Arial/Helvetica"
+    check: semi
+    criterion: "宽度∈{90,180}±tol，格式与 dpi 达标，字体合规"
+    source: nature_formatting
+  - id: data_availability
+    layer: L1
+    requirement: "数据可得性声明存在，并写明访问条件（含受控访问理由/联系方式/响应时限）"
+    check: auto
+    criterion: "存在 Data availability 段且含访问条件要素"
+    source: nature_reporting_standards
+  - id: code_availability
+    layer: L1
+    requirement: "如用自定义代码，须有代码可得性声明"
+    check: semi
+    criterion: "有自定义分析→存在 Code availability 段"
+    source: nature_reporting_standards
+  - id: reporting_summary
+    layer: L1
+    requirement: "完成并提交 Nature Reporting Summary（含统计报告项）"
+    check: manual
+    criterion: "Reporting Summary 已填且与正文一致"
+    source: nature_reporting_standards
+  - id: author_contributions
+    layer: L1
+    requirement: "作者贡献声明存在"
+    check: auto
+    criterion: "存在 Author contributions 段"
+    source: nature_reporting_standards
+  - id: competing_interests
+    layer: L1
+    requirement: "利益冲突声明存在"
+    check: auto
+    criterion: "存在 Competing interests 段"
+    source: icmje
+
+  # L2 STROBE 科学完整性（回顾性队列）
+  - id: strobe_design_named
+    layer: L2
+    requirement: "标题/摘要点明研究设计为队列研究"
+    check: auto
+    criterion: "标题或摘要出现 cohort/队列"
+    source: strobe
+  - id: strobe_eligibility
+    layer: L2
+    requirement: "入排标准、数据来源、参与者选择与随访方式清晰"
+    check: manual
+    criterion: "方法含入排/来源/随访描述"
+    source: strobe
+  - id: strobe_variables
+    layer: L2
+    requirement: "暴露、结局、混杂变量明确定义（含诊断标准）"
+    check: manual
+    criterion: "变量定义齐全且可核"
+    source: strobe
+  - id: strobe_statmethods
+    layer: L2
+    requirement: "统计方法含混杂处理、缺失数据、亚组/敏感性分析"
+    check: manual
+    criterion: "方法覆盖三项"
+    source: strobe
+  - id: strobe_participant_flow
+    layer: L2
+    requirement: "参与者各阶段人数 + 失访人数与原因"
+    check: semi
+    criterion: "有流程数；含失访 n"
+    source: strobe
+  - id: strobe_table1
+    layer: L2
+    requirement: "描述性数据（Table 1）按组列出"
+    check: auto
+    criterion: "存在基线特征表"
+    source: strobe
+  - id: strobe_effect_ci
+    layer: L2
+    requirement: "主结果给出效应量 + 95% 置信区间（非仅 p 值）"
+    check: semi
+    criterion: "主结果含点估计+CI"
+    source: strobe
+  - id: strobe_limitations
+    layer: L2
+    requirement: "讨论局限性（含潜在偏倚方向）"
+    check: manual
+    criterion: "讨论含 limitations 段"
+    source: strobe
+  - id: strobe_funding
+    layer: L2
+    requirement: "说明资金来源"
+    check: auto
+    criterion: "存在 Funding 段"
+    source: strobe
+
+  # L3 诚信
+  - id: citation_authenticity
+    layer: L3
+    requirement: "每条引用真实存在、DOI 指向正确版本(非撤稿/勘误)、且内容支持引用论点"
+    check: auto
+    criterion: "100% 引用跨库核对通过（不靠模型记忆）"
+    source: icmje
+  - id: authorship_icmje
+    layer: L3
+    requirement: "署名满足 ICMJE 四条标准"
+    check: manual
+    criterion: "每位作者满足四条"
+    source: icmje
+  - id: ethics_statement
+    layer: L3
+    requirement: "伦理审批/IRB 声明（回顾性研究注明豁免知情同意如适用）"
+    check: auto
+    criterion: "存在 Ethics approval 段"
+    source: icmje
+  - id: stats_reproducible
+    layer: L3
+    requirement: "统计结果来自真实计算、可复现（无编造数字）"
+    check: auto
+    criterion: "正文数字可由分析代码复算一致"
+    source: icmje
+  - id: no_redundant_pub
+    layer: L3
+    requirement: "无冗余/重复发表"
+    check: manual
+    criterion: "cover letter 声明且核查无重复"
+    source: icmje
+
+# ── 质量评分：越过最低线后衡量"高质量" ─────────────────────────
+quality_scores:
+  - id: narrative_clarity
+    requirement: "全文一条清晰故事线，逻辑连贯"
+    check: manual
+    weight: 0.25
+  - id: claims_calibrated
+    requirement: "主张与证据匹配，观察性研究避免因果化措辞（over-claim）"
+    check: semi
+    weight: 0.30
+  - id: novelty_framing
+    requirement: "新颖性/贡献被清晰框定"
+    check: manual
+    weight: 0.15
+  - id: figures_storytelling
+    requirement: "图自解释、能独立讲清要点"
+    check: manual
+    weight: 0.15
+  - id: internal_consistency
+    requirement: "正文/表/图中的数字完全一致"
+    check: auto
+    weight: 0.15
+
+sources:
+  nature_formatting: "https://www.nature.com/nature/for-authors/formatting-guide"
+  nature_initial_submission: "https://www.nature.com/nature/for-authors/initial-submission"
+  nature_reporting_standards: "https://www.nature.com/nature/editorial-policies/reporting-standards"
+  strobe: "https://www.equator-network.org/reporting-guidelines/strobe/"
+  icmje: "https://www.icmje.org/recommendations/browse/manuscript-preparation/preparing-for-submission.html"
