@@ -364,6 +364,155 @@ class MockLLM:
         return "sec_declarations", "\n".join(blocks)
 
 
+# 由真实 Claude（本会话）按 draft 细胞指令亲笔撰写的章节（散文 + token，数字归代码）。
+# 用途：在拿到 API key 之前，用「这个 Claude」当真模型把整条流程跑通——验证提示工程与
+# 数字归代码确实在真模型下成立。复现性来自一次性捕获回放；上线时换 AnthropicLLM 即逐次实时调用。
+_CLAUDE_DRAFTS = {
+    "draft_title": ("sec_title",
+        "Guideline-directed therapy and rehospitalization in HFpEF: "
+        "a synthetic retrospective cohort study"),
+
+    "draft_abstract": ("sec_abstract", "## Abstract\n" + (
+        "Heart failure with preserved ejection fraction (HFpEF) is common and a leading cause of "
+        "recurrent hospitalization, yet the prognostic value of guideline-directed therapy in this "
+        "population remains uncertain. In this synthetic retrospective cohort study we analysed "
+        "{{N_TOTAL}} patients with HFpEF to examine whether guideline-directed therapy was associated "
+        "with rehospitalization-free survival. Patients were grouped by treatment strategy and followed "
+        "for up to thirty-six months, during which {{N_EVENTS}} rehospitalization events occurred. After "
+        "multivariable adjustment for age, sex, comorbidities, natriuretic peptide and ejection fraction, "
+        "guideline-directed therapy was independently associated with a lower hazard of rehospitalization, "
+        "with {{ABSTRACT_EFFECT}}. Because the cohort is entirely synthetic, these results demonstrate an "
+        "end-to-end analytic pipeline and carry no clinical implication.")),
+
+    "draft_intro": ("sec_intro", "## Introduction\n" + (
+        "Heart failure with preserved ejection fraction (HFpEF) now accounts for roughly half of all "
+        "heart failure and is a leading driver of recurrent, costly hospitalization. Unlike heart failure "
+        "with reduced ejection fraction, disease-modifying options for HFpEF have historically been "
+        "limited, and the extent to which guideline-directed therapy improves the longitudinal "
+        "rehospitalization burden in routine practice is incompletely defined. Risk stratification at "
+        "discharge is further complicated because the prognostic weight of widely available variables, "
+        "such as natriuretic peptides and ejection fraction, varies across real-world cohorts. We "
+        "therefore set out to quantify the association between guideline-directed therapy and "
+        "rehospitalization-free survival in a retrospective cohort, while transparently demonstrating an "
+        "automated pipeline that carries a cohort from raw data through statistics to a submission-ready "
+        "manuscript. Because the cohort analysed here is entirely synthetic, the clinical narrative is "
+        "illustrative and is intended to validate the pipeline rather than to inform practice.")),
+
+    "draft_results": ("sec_results", "## Results\n" + (
+        "Among {{N_TOTAL}} patients with HFpEF, {{N_EVENTS}} rehospitalization events were recorded over "
+        "a median follow-up of {{MEDIAN_FU}} months. Baseline demographic, comorbidity and laboratory "
+        "characteristics, together with treatment allocation and outcomes, are summarised in **Table 1**.\n\n"
+        "{{TABLE1}}\n\n"
+        "Rehospitalization-free survival diverged between groups: in the Kaplan-Meier analysis it was "
+        "higher under guideline-directed therapy than under usual care ({{LOGRANK}}; **Figure 1**). This "
+        "association persisted after multivariable adjustment. In the Cox proportional-hazards model, "
+        "guideline-directed therapy was independently associated with a lower hazard of rehospitalization "
+        "({{RESULTS_EFFECT}}). Among covariates, higher baseline natriuretic peptide and chronic kidney "
+        "disease were associated with higher hazards, consistent with their established prognostic role "
+        "(Table 1).")),
+
+    "draft_discussion": ("sec_discussion", "## Discussion\n" + (
+        "In this synthetic retrospective cohort, guideline-directed therapy was associated with longer "
+        "rehospitalization-free survival after adjustment for major prognostic factors, and the effect "
+        "estimate was stable between the unadjusted survival analysis and the multivariable model. The "
+        "direction and magnitude of the association are coherent with the assumed data-generating process "
+        "and serve primarily to validate the analytic pipeline end to end. These findings should not be "
+        "read as clinical evidence. Because the cohort is entirely synthetic, it carries no measurement "
+        "error, missingness or unmeasured confounding of the kind that pervades real registries, and the "
+        "associations reported here are not generalisable to real patients. The design is observational, "
+        "so the association must not be interpreted as causal; residual confounding by indication is "
+        "expected in any real analogue. Further limitations include reliance on a single synthetic source "
+        "and a simplified proportional-hazards generator that may bias toward the assumed effect. "
+        "Prospective validation on real, governance-approved data is required before any inference is "
+        "drawn.")),
+
+    "draft_methods": ("sec_methods", "## Methods\n" + (
+        "This was a retrospective cohort analysis of a fully synthetic HFpEF dataset comprising "
+        "{{N_TOTAL}} patients generated deterministically in software under a fixed random seed; no real "
+        "patients, hospitals or medical records were involved, and the dataset is reproducible from the "
+        "released code. The exposure of interest was guideline-directed therapy versus usual care. The "
+        "primary outcome was rehospitalization, analysed as time to first event, with administrative "
+        "censoring at thirty-six months and censoring at death or loss to follow-up. Continuous baseline "
+        "variables were compared between groups with Welch t tests when approximately normal and with the "
+        "Mann-Whitney U test when skewed (natriuretic peptide); categorical variables were compared with "
+        "Pearson chi-square tests. Rehospitalization-free survival was estimated by the Kaplan-Meier "
+        "method and compared with the log-rank test. A multivariable Cox proportional-hazards model "
+        "(Breslow approximation for ties) estimated the adjusted association, with covariates specified a "
+        "priori: age, sex, diabetes, atrial fibrillation, chronic kidney disease, log-transformed "
+        "natriuretic peptide and ejection fraction; continuous covariates were standardised. Effect sizes "
+        "are reported as hazard ratios with 95% confidence intervals and two-sided P values. All analyses "
+        "were implemented in dependency-free Python and are exactly reproducible from the released code "
+        "and seed.")),
+
+    "draft_declarations": ("sec_declarations", "\n".join([
+        "## Figure legends",
+        "**Figure 1.** Kaplan-Meier estimates of rehospitalization-free survival by treatment group "
+        "(guideline-directed therapy versus usual care) in the synthetic HFpEF cohort, with a "
+        "number-at-risk table beneath the curves; {{LOGRANK}}.",
+        "",
+        "## References",
+        # 占位 DOI（10.0000/mock.NNN）+ 明确标注 synthetic：真模型按指令绝不杜撰真实 DOI。
+        "1. Author A, et al. Synthetic placeholder reference on HFpEF epidemiology (not a real "
+        "publication; placeholder identifier). J Synthetic Cardiol. 2024. https://doi.org/10.0000/mock.001",
+        "2. Author B, et al. Synthetic placeholder reference on natriuretic peptides in heart failure "
+        "(not a real publication; placeholder identifier). J Synthetic Cardiol. 2023. "
+        "https://doi.org/10.0000/mock.002",
+        "3. Author C, et al. Synthetic placeholder reference on retrospective cohort methodology (not a "
+        "real publication; placeholder identifier). J Synthetic Methods. 2022. "
+        "https://doi.org/10.0000/mock.003",
+        "4. Author D, et al. Synthetic placeholder reference on guideline-directed therapy in HFpEF (not "
+        "a real publication; placeholder identifier). J Synthetic Cardiol. 2024. "
+        "https://doi.org/10.0000/mock.004",
+        "",
+        "## Data availability",
+        "This study used a fully synthetic cohort generated deterministically by code under a fixed "
+        "random seed; no real patient data were used. The synthetic dataset and the generating code are "
+        "openly available in the project repository and can be regenerated exactly by running the "
+        "released pipeline.",
+        "",
+        "## Code availability",
+        "All analysis code (cohort generation, statistics and manuscript assembly) is custom and is "
+        "openly available in the project repository; every reported value is reproducible from the fixed "
+        "seed.",
+        "",
+        "## Author contributions",
+        "The automated pipeline assembled the cohort, executed the statistical analysis and drafted the "
+        "manuscript; a human investigator supervised the work and is responsible for the final content.",
+        "",
+        "## Competing interests",
+        "The authors declare no competing interests.",
+        "",
+        "## Ethics",
+        "This study used a fully synthetic, computer-generated cohort; no human participants, tissue or "
+        "identifiable data were involved, so institutional review board approval and informed consent "
+        "were not applicable and were waived.",
+        "",
+        "## Funding",
+        "This work received no specific external funding.",
+    ])),
+}
+
+
+class ClaudeAuthoredLLM:
+    """真实模型后端（⚠️ 内容由本会话的 Claude 亲笔撰写并捕获回放，非模板桩）。
+
+    定位：在没有 API key 的离线环境里，用「这个 Claude」当真模型把整条流程跑通——
+    各章节是真模型按 draft 细胞指令产出的「散文 + token」，数字仍由 build_tokens 在代码侧回填
+    （数字归代码红线不变）。接口与 AnthropicLLM / MockLLM 完全一致（complete(prompt) -> str）。
+
+    与上线版的唯一区别：本类**一次性捕获**真模型输出后确定性回放；换 AnthropicLLM 即变为
+    逐次实时调用同样的提示词。Context(llm=ClaudeAuthoredLLM()) → Context(llm=AnthropicLLM())。
+    """
+
+    def complete(self, prompt: str) -> str:
+        task = _tag(prompt, "TASK")
+        entry = _CLAUDE_DRAFTS.get(task)
+        if entry is None:
+            return json.dumps({"result": "claude-noop"}, ensure_ascii=False)
+        key, text = entry
+        return json.dumps({key: text}, ensure_ascii=False)
+
+
 # ── 计算函数表（基建：确定性、可复现） ──────────────────────────────────────
 DATASETS = {
     # 心衰演示队列：治疗组 vs 对照组的 LVEF（%）

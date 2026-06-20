@@ -17,10 +17,14 @@
 """
 from __future__ import annotations
 
+import os
 from pathlib import Path
 
 from . import scientific_loop
-from .backends import ALLOWED_TOKENS, COMPUTE_FNS, MockLLM, apply_tokens, build_tokens
+from .backends import (
+    ALLOWED_TOKENS, COMPUTE_FNS, ClaudeAuthoredLLM, MockLLM,
+    apply_tokens, build_tokens,
+)
 from .core import Context, Registry, compose, differentiate, stem_compute, stem_llm
 from .orchestrator import Orchestrator
 from validators import manuscript_audit
@@ -184,9 +188,21 @@ def main():
     print("⚠️  数据与文本均为 SYNTHETIC（非真实曙光数据/真实文献）；离线确定性可复现。")
     print("=" * 72)
 
+    # 写作后端可选：LLM_BACKEND=mock（默认离线桩）｜claude（本会话 Claude 亲笔，真模型跑通）｜
+    # api（真实 AnthropicLLM，需 key+网络+SDK）。三者接口一致，管线结构一行不改。
+    backend = os.environ.get("LLM_BACKEND", "mock").lower()
+    if backend == "claude":
+        llm_backend, tag = ClaudeAuthoredLLM(), "ClaudeAuthoredLLM（真模型亲笔·捕获回放）"
+    elif backend == "api":
+        from .backends import AnthropicLLM
+        llm_backend, tag = AnthropicLLM(), "AnthropicLLM（真实 API·实时调用）"
+    else:
+        llm_backend, tag = MockLLM(), "MockLLM（离线模板桩）"
+    print(f"写作后端：{tag}")
+
     reg = Registry()
     organs = build_pipeline(reg)
-    ctx = Context(llm=MockLLM(), compute=COMPUTE_FNS)
+    ctx = Context(llm=llm_backend, compute=COMPUTE_FNS)
 
     print()
     print_lineage(reg)

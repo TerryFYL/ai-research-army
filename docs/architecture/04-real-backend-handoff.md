@@ -45,6 +45,23 @@ rehospitalization, death, followup_months  # 结局
 
 ---
 
+## 二·补) 三档写作后端（同一接口，环境变量切换）
+
+`complete(prompt) -> str` 接口下挂三个可互换后端，管线结构一行不改：
+
+| `LLM_BACKEND` | 后端 | 说明 |
+|---|---|---|
+| `mock`（默认） | `MockLLM` | 离线模板桩，确定性，用于结构/闸门回归 |
+| `claude` | `ClaudeAuthoredLLM` | **本会话的 Claude 亲笔**按 draft 指令写的章节，捕获回放——**无需 key 即用真模型跑通全流程** |
+| `api` | `AnthropicLLM` | 真实 API 实时调用（需 key+网络+SDK） |
+
+```bash
+LLM_BACKEND=claude python3 -m kernel.pipeline   # 真模型(本Claude)端到端：18/18 离线硬闸门全绿
+```
+
+> 推荐路径正是：先 `claude` 验证提示工程+数字归代码在真模型下成立 → 再 `api` 上线实时调用。
+> 两者提示词、token 回填、审核闸门完全相同，唯一差别是「捕获回放」vs「逐次实时」。
+
 ## 三、切换到真后端：改这三处（管线结构其余一行不改）
 
 ```python
