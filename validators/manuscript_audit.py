@@ -60,8 +60,10 @@ def p_title_format(m):
     issues = []
     if len(t) > 120:
         issues.append(f"过长 {len(t)} 字符")
-    if re.search(r"\b[A-Z]{2,}\b", re.sub(r"\b(LVEF|HFpEF|HFrEF)\b", "", t)):
-        issues.append("含缩写")
+    # 允许常见领域缩写（标题指南通常允许标准化学/医学缩写）
+    allow = r"NT-proBNP|proBNP|HFpEF|HFrEF|LVEF|BNP|NYHA|HR|CI|HF"
+    if re.search(r"\b[A-Z]{2,}\b", re.sub(allow, "", t)):
+        issues.append("含非常规缩写")
     if t.rstrip().endswith("."):
         issues.append("末尾有句点")
     return (FAIL, "；".join(issues)) if issues else (PASS, f"{len(t)} 字符、无缩写")
@@ -213,6 +215,24 @@ PROBES = {
 
 
 # ── 跑审核 ──────────────────────────────────────────────────────────────
+def evaluate(text: str, std: dict) -> dict:
+    """程序化审核：返回 {gate_id: (status, detail, layer)}，供闭环调用（不打印）。"""
+    m = parse(text)
+    out = {}
+    for g in std["hard_gates"]:
+        probe = PROBES.get(g["id"])
+        if probe:
+            status, detail = probe(m)
+        else:
+            status, detail = (MANUAL, "需人工") if g.get("check") == "manual" else (NA, "未实现探针")
+        out[g["id"]] = (status, detail, g["layer"])
+    return out
+
+
+def reds_of(results: dict) -> list:
+    return [gid for gid, (s, *_ ) in results.items() if s == FAIL]
+
+
 def audit(manuscript_path: Path, standard_path: Path) -> int:
     std = yaml.safe_load(standard_path.read_text())
     m = parse(manuscript_path.read_text())

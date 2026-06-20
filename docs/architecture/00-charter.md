@@ -91,6 +91,7 @@
 
 ```
 本纲领 (00-charter.md) ── 方向 / 目标 / 方法论 / 准则
+   ├─ 01-execution-doctrine.md         自治执行契约：目标/OODA循环原则/停止条件/红线
    ├─ capability-substrate.md          两个算子 + 五层结构 + 资源映射（机制）
    ├─ human-body-correspondence.md     照谁长：人体层级/子系统的同构映射（蓝图）
    ├─ genesis-developmental-program.md 长的顺序：0→1 九阶段，通用性在 Stage 4→5 涌现
@@ -107,6 +108,8 @@
 | `emergence-critical-mass.md` | 为什么是"量"的问题？怎么更快到临界？ |
 | `manuscript-standard-methodology.md` | "高质量完成"如何定义？标准从哪找？何时可结束？ |
 | `nature-cohort-audit-checklist.md` | NCVR×回顾队列完成定义 + 已跑通的审核验证器 |
+| `01-execution-doctrine.md` | 自治执行的目标/原则/停止条件/红线 |
+| `kernel/scientific_loop.py`（已跑通） | 闭环：编排+审核+修订自驱收敛到合格 |
 | `kernel/` · `validators/manuscript_audit.py`（已跑通） | 机制与验证器的可运行证据 |
 
 ---

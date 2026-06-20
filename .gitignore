@@ -31,3 +31,6 @@ tests/*/*.flag
 
 # 环境变量
 .env
+
+# 科学循环产出的收敛稿件（派生物，不入库）
+*.converged.md
