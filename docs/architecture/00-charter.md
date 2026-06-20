@@ -109,7 +109,9 @@
 | `manuscript-standard-methodology.md` | "高质量完成"如何定义？标准从哪找？何时可结束？ |
 | `nature-cohort-audit-checklist.md` | NCVR×回顾队列完成定义 + 已跑通的审核验证器 |
 | `01-execution-doctrine.md` | 自治执行的目标/原则/停止条件/红线 |
+| `03-mock-pipeline-e2e.md`（已跑通） | M2 全自动管线：合成数据→统计→生成稿件→审核→收敛（离线确定性） |
 | `kernel/scientific_loop.py`（已跑通） | 闭环：编排+审核+修订自驱收敛到合格 |
+| `kernel/pipeline.py`（已跑通） | 全管线入口：data→stats→draft 自动装配 + 交接科学循环收敛 |
 | `kernel/` · `validators/manuscript_audit.py`（已跑通） | 机制与验证器的可运行证据 |
 
 ---
