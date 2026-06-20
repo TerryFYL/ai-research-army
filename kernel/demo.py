@@ -1,10 +1,10 @@
 """能力内核 · 跑通演示
 
-用医学科研域的一个最小真实切片，证明"分化 + 组合"机制成立：
-  1. 两个干细胞（语言细胞 / 计算细胞）
-  2. 分化：一个干细胞 -> 多个专门细胞（一生多）
-  3. 组合：多个专门细胞 -> 器官 -> 系统（多合一，且递归嵌套）
-  4. 端到端跑一遍，全程离线确定性。
+两幕，对照着看，正好是发育程序里那个**质变**：
+
+  第一幕（Stage 4 形态发生）：我手工把细胞接成一条固定管线。能跑，但只会这一条。
+  第二幕（Stage 5 神经涌现）：编排器拿到不同目标，从**同一池细胞**自己装配出
+                              不同通路 —— 没有任何预写管线。这就是"能完成各种各样任务"。
 
 运行：  python3 -m kernel.demo
 """
@@ -14,87 +14,87 @@ import json
 
 from .backends import COMPUTE_FNS, StubLLM
 from .core import Context, Registry, compose, differentiate, sequential, stem_compute, stem_llm
+from .orchestrator import Orchestrator
 
 SAMPLE_CASE = "患者女，67岁，诊断慢性心力衰竭，入院 LVEF 38%，随访 12 个月，期间因心衰再入院一次。"
 
 
-def build(reg: Registry):
-    # ── 干细胞 ──
+def build(reg: Registry) -> dict:
+    """长出一池细胞，并给每个细胞声明契约（consumes/produces），供神经系统自动装配。"""
     llm = stem_llm(reg)
     comp = stem_compute(reg)
 
-    # ── 分化：一个语言干细胞 -> 三个专门语言细胞 ──
-    extract_baseline = differentiate(
-        reg, llm, "extract_baseline·抽取基线",
-        {"task": "extract_baseline", "instruction": "从病例文本抽取年龄/性别/LVEF"},
-        desc="语言细胞 + 基线抽取条件")
-    extract_endpoint = differentiate(
-        reg, llm, "extract_endpoint·抽取终点",
-        {"task": "extract_endpoint", "instruction": "抽取再入院与随访时长"},
-        desc="语言细胞 + 终点抽取条件")
-    interpret = differentiate(
-        reg, llm, "interpret·结果解读",
-        {"task": "interpret", "instruction": "用一句话解读组间比较结果"},
-        desc="语言细胞 + 解读条件")
+    cells = {}
 
-    # ── 分化：一个计算干细胞 -> 两个专门计算细胞 ──
-    load = differentiate(
-        reg, comp, "load_cohort·载入队列",
-        {"fn": "load_dataset", "name": "heartfailure_demo"},
-        desc="计算细胞 + 载入条件")
-    compare = differentiate(
-        reg, comp, "group_compare·组间比较",
-        {"fn": "group_compare", "group_key": "arm", "value_key": "lvef"},
-        desc="计算细胞 + 组间比较条件")
+    def diff(base, name, cond, consumes, produces, desc=""):
+        cap = differentiate(reg, base, name, cond, desc=desc)
+        cap.consumes, cap.produces = set(consumes), set(produces)
+        cells[produces[0]] = cap  # 用主产物当索引名
+        return cap
 
-    # ── 组合：专门细胞 -> 器官 ──
-    profile = compose(
-        reg, "profile_cohort·队列分析器官", [load, compare], sequential,
-        desc="载入 + 组间比较")
+    # 语言干细胞 -> 四个专门语言细胞
+    diff(llm, "extract_baseline·抽取基线",
+         {"task": "extract_baseline", "instruction": "抽取年龄/性别/LVEF"},
+         consumes=["case_text"], produces=["baseline"])
+    diff(llm, "extract_endpoint·抽取终点",
+         {"task": "extract_endpoint", "instruction": "抽取再入院与随访时长"},
+         consumes=["case_text"], produces=["endpoint"])
+    diff(llm, "interpret·结果解读",
+         {"task": "interpret", "instruction": "解读组间比较"},
+         consumes=["comparison"], produces=["interpretation"])
+    diff(llm, "summarize·临床小结",
+         {"task": "summarize", "instruction": "整合个体与队列层面"},
+         consumes=["baseline", "endpoint", "interpretation"], produces=["clinical_summary"])
 
-    # ── 组合：器官 + 语言细胞 -> 系统（递归：组合体里嵌套组合体）──
-    system = compose(
-        reg, "case_to_finding·病例到结论系统",
-        [extract_baseline, extract_endpoint, profile, interpret], sequential,
-        desc="抽取 + 队列分析 + 解读")
+    # 计算干细胞 -> 两个专门计算细胞
+    diff(comp, "load_cohort·载入队列",
+         {"fn": "load_dataset", "name": "heartfailure_demo"},
+         consumes=[], produces=["table"])
+    diff(comp, "group_compare·组间比较",
+         {"fn": "group_compare", "group_key": "arm", "value_key": "lvef"},
+         consumes=["table"], produces=["comparison"])
 
-    return system
+    return cells
 
 
-def lineage_report(reg: Registry) -> str:
-    caps = reg.all()
-    by_id = {c.id: c for c in caps}
-    lines = ["能力谱系 (Capability Lineage)", "=" * 56]
-    for s in (c for c in caps if c.kind == "stem"):
-        lines.append(f"[干细胞] {s.name}")
-        for k in (c for c in caps if c.kind == "differentiated" and s.id in c.parents):
-            cond = ", ".join(f"{kk}={vv}" for kk, vv in k.conditions.items() if kk in ("task", "fn"))
-            lines.append(f"   └─[分化] {k.name}  (+条件: {cond})")
-    lines.append("")
-    for c in (c for c in caps if c.kind == "composed"):
-        members = " + ".join(by_id[p].name.split("·")[0] for p in c.parents)
-        lines.append(f"[组合] {c.name}\n          ← {members}")
-    return "\n".join(lines)
+def act_one_handwired(reg: Registry, cells: dict, ctx: Context) -> None:
+    print("第一幕 · Stage 4：手工接成的固定管线（只会这一条）")
+    print("-" * 60)
+    organ = compose(reg, "profile_cohort·队列分析器官",
+                    [cells["table"], cells["comparison"]], sequential)
+    system = compose(reg, "case_to_finding·病例到结论系统",
+                     [cells["baseline"], cells["endpoint"], organ, cells["interpretation"]],
+                     sequential)
+    out = system.run({"case_text": SAMPLE_CASE, "dataset": "heartfailure_demo"}, ctx)
+    print(f"  组间比较真算：p = {out['comparison']['p_value']}")
+    print(f"  解读：{out['interpretation']}")
+
+
+def act_two_orchestrated(reg: Registry, ctx: Context) -> None:
+    print("\n第二幕 · Stage 5：神经系统按目标自动装配（同一池细胞，不同任务）")
+    print("-" * 60)
+    brain = Orchestrator(reg)
+    payload = {"case_text": SAMPLE_CASE, "dataset": "heartfailure_demo"}
+
+    for goal in ("baseline", "interpretation", "clinical_summary"):
+        plan, state = brain.achieve(goal, payload, ctx)
+        path = " → ".join(c.name.split("·")[0] for c in plan)
+        print(f"\n  目标「{goal}」")
+        print(f"    自动装配通路：{path}")
+        print(f"    产出：{json.dumps(state[goal], ensure_ascii=False)}")
 
 
 def main() -> None:
     reg = Registry()
-    system = build(reg)
-
-    print(lineage_report(reg))
-    print("\n" + "=" * 56)
-    print("端到端运行 (输入一段病例文本 + 一个队列数据集名)")
-    print("=" * 56)
-
+    cells = build(reg)
     ctx = Context(llm=StubLLM(), compute=COMPUTE_FNS)
-    result = system.run({"case_text": SAMPLE_CASE, "dataset": "heartfailure_demo"}, ctx)
 
-    for key in ("baseline", "endpoint", "comparison", "interpretation"):
-        if key in result:
-            print(f"\n· {key}:")
-            print("  " + json.dumps(result[key], ensure_ascii=False, indent=2).replace("\n", "\n  "))
+    act_one_handwired(reg, cells, ctx)
+    act_two_orchestrated(reg, ctx)
 
-    print(f"\n执行轨迹：{len(ctx.trace)} 步")
+    print("\n" + "=" * 60)
+    print("看点：第二幕里我没写任何管线。三个目标，三条不同通路，")
+    print("都是神经系统从同一池细胞按契约现场推理装配出来的 —— 这就是通用性的胚胎。")
 
 
 if __name__ == "__main__":

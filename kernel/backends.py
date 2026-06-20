@@ -67,6 +67,20 @@ class StubLLM:
                 ensure_ascii=False,
             )
 
+        if task == "summarize":
+            b = payload.get("baseline", {})
+            e = payload.get("endpoint", {})
+            it = payload.get("interpretation", "")
+            return json.dumps(
+                {"clinical_summary": (
+                    f"患者 {b.get('age')} 岁{b.get('sex')}性，基线 LVEF {b.get('lvef')}%；"
+                    f"随访 {e.get('followup_months')} 个月，"
+                    f"再入院：{'是' if e.get('rehospitalization') else '否'}。"
+                    f"队列层面：{it}"
+                )},
+                ensure_ascii=False,
+            )
+
         return json.dumps({"result": "stub-noop"}, ensure_ascii=False)
 
 

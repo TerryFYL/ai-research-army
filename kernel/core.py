@@ -46,6 +46,9 @@ class Capability:
     parents: list = field(default_factory=list)  # 谱系：来源能力的 id
     conditions: dict = field(default_factory=dict)  # 分化时固化的附加条件
     desc: str = ""
+    # 契约（"受体/配体"）：声明消费什么、产出什么 —— 让神经系统能自动装配
+    consumes: set = field(default_factory=set)
+    produces: set = field(default_factory=set)
 
     def run(self, payload: dict, ctx: Optional[Context] = None) -> dict:
         ctx = ctx or Context()
