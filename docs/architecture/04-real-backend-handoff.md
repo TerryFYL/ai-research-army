@@ -25,10 +25,15 @@
 **真算 `stats`** 渲染、`apply_tokens()` 在代码侧回填（见 `kernel/pipeline.py: writing_wiring`）。
 因此真模型即使产生幻觉也改不动正文数字——`stats_reproducible` 由架构保证，而非靠模型自律。
 
-### 2) 真模型提示工程（draft 细胞指令已可直接喂真 Claude）
+### 2) 真模型提示工程 + 脏输出兜底（draft 细胞指令已可直接喂真 Claude）
 每个 draft 细胞的 `instruction`（见 `pipeline.py: build_pipeline`）已写成真模型可执行的指令：
-「只写散文、禁止写任何数字/统计/引用、需要处插入指定 token、按 JSON 返回」。
+「只写散文、禁止写任何数字/统计/引用、需要处插入指定 token、**只返回单键 JSON（键名即 `produces`）**」。
 `MockLLM` 读 `TASK` 分派，真 Claude 读 `INSTRUCTION`——**同一批细胞，两套后端都跑得动**。
+
+真模型不像离线桩必然吐干净 JSON，故 `core.coerce_llm_output` 逐级兜底：① ```json``` 围栏；
+② 前后夹带散文；③ 单键 JSON 但字符串值含**裸换行**（多行 markdown 最常踩，标准 json 直接报错）；
+④ 干脆只给正文 markdown。已离线用「脏输出模拟真模型」端到端验证：七种脏格式均逐字还原、
+首稿仍 18/18 闸门全绿。这意味着真模型偶发的格式抖动不会让管线崩。
 
 ### 3) 真数据加载适配器（与合成队列同形）
 新增计算细胞 `load_cohort_csv`（`fn=load_cohort_csv`），按 `COHORT_CSV_SCHEMA` 读真实 CSV，
@@ -62,28 +67,40 @@ LLM_BACKEND=claude python3 -m kernel.pipeline   # 真模型(本Claude)端到端�
 > 推荐路径正是：先 `claude` 验证提示工程+数字归代码在真模型下成立 → 再 `api` 上线实时调用。
 > 两者提示词、token 回填、审核闸门完全相同，唯一差别是「捕获回放」vs「逐次实时」。
 
-## 三、切换到真后端：改这三处（管线结构其余一行不改）
+## 三、本地拉取 + 跑真模型（你现在要做的）
 
+### A) 把云端这条分支拉到本地
+```bash
+git fetch origin claude/model-viability-check-355c96
+git checkout claude/model-viability-check-355c96     # 或 git switch
+```
+
+### B) 切到真 API —— **零改码，纯环境变量**
+真模型后端 `AnthropicLLM` 的凭证/网关/模型全部读环境变量，配好本地大模型基建即可：
+```bash
+pip install anthropic
+export ANTHROPIC_API_KEY=sk-...            # 凭证（或本地基建的 token）
+export ANTHROPIC_BASE_URL=https://...      # 仅当走自建网关/本地代理时设
+export ANTHROPIC_MODEL=claude-sonnet-4-6   # 可选，默认均衡档
+LLM_BACKEND=api python3 -m kernel.pipeline # 真模型实时调用，端到端跑通
+```
+> 缺 SDK 会给出明确提示而非崩栈；脏输出由 `coerce_llm_output` 兜底（见 二·2）。
+
+### C) 换真数据（合成 → 真实 CSV）：改 `build_pipeline` 里的 load 细胞
 ```python
-# kernel/pipeline.py —— 真后端版（示意，复制即用）
-from kernel.backends import AnthropicLLM            # 1) 真模型
-
-# 1) LLM 后端：MockLLM() → AnthropicLLM()（需 key/SDK/网络）
-ctx = Context(llm=AnthropicLLM(model="claude-sonnet-4-6"), compute=COMPUTE_FNS)
-
-# 2) 数据细胞：合成 → 真实 CSV（在 build_pipeline 里把 load 细胞改成）
 load = diff(comp, "load_real·载入真实队列",
             {"fn": "load_cohort_csv", "path": "clients/shuguang_hfpef.csv",
              "exposure_arm": "GDT"},               # 暴露组标签按真数据填
             consumes=[], produces=["cohort"])
 # 同时把 STUDY_META["synthetic"] 设为 False（叙事不再标 synthetic）
-
-# 3) 引用真实性：接一个文献库核对细胞（产出 verified_refs），在 audit 前替换占位 DOI；
-#    在补全前，citation_authenticity 继续诚实 escalate —— 绝不为过闸而编造 DOI。
 ```
 
-> 切换后 `MockLLM`、合成队列、`build_tokens` 的"数字归代码"保护**全部保留**：
-> 真 Claude 依旧只写散文、碰不到数字；真数据走同一套统计与审核闸门。
+### D) 引用真实性（最后一项需外部能力）
+接一个文献库核对细胞（产出 `verified_refs`），在 audit 前替换占位 DOI；
+**补全前 `citation_authenticity` 继续诚实 escalate —— 绝不为过闸而编造 DOI。**
+
+> 以上切换后，`build_tokens` 的"数字归代码"保护**全部保留**：真模型只写散文、碰不到数字；
+> 真数据走同一套统计与审核闸门。
 
 ---
 
@@ -97,6 +114,7 @@ load = diff(comp, "load_real·载入真实队列",
 ## 五、验证命令
 
 ```bash
-python3 -m kernel.pipeline       # 当前：合成数据离线端到端收敛
-# 真后端：完成三处切换 + 提供 key/数据后，同一条命令即跑真数据真模型
+python3 -m kernel.pipeline                    # 默认 mock：离线确定性收敛（回归基线）
+LLM_BACKEND=claude python3 -m kernel.pipeline # 真模型(本Claude)亲笔，无需 key
+LLM_BACKEND=api    python3 -m kernel.pipeline # 真 API 实时调用（配好上面 B) 的环境变量）
 ```

@@ -15,6 +15,7 @@ from __future__ import annotations
 
 import itertools
 import json
+import re
 from dataclasses import dataclass, field
 from typing import Callable, Optional
 
@@ -109,6 +110,66 @@ def _parse_json(raw: str) -> dict:
     return json.loads(raw)
 
 
+_FENCE = re.compile(r"^```[a-zA-Z0-9_]*\s*\n?(.*?)\n?```\s*$", re.S)
+
+
+def _strip_fences(s: str) -> str:
+    """去掉真模型常加的 ``` / ```json 代码围栏。"""
+    s = s.strip()
+    m = _FENCE.match(s)
+    return m.group(1).strip() if m else s
+
+
+def _try_json_dict(s: str) -> "Optional[dict]":
+    """严格 JSON 失败时，再把裸换行/制表符转义后试一次（修复字符串内含裸换行的脏输出）。"""
+    for candidate in (s, s.replace("\r", "").replace("\n", "\\n").replace("\t", "\\t")):
+        try:
+            obj = json.loads(candidate)
+        except Exception:
+            continue
+        if isinstance(obj, dict):
+            return obj
+    return None
+
+
+def coerce_llm_output(raw: str, out_key: "Optional[str]" = None) -> dict:
+    """把真实模型的「自由文本」稳健地落成结构化输出。
+
+    真模型不像离线桩那样必然吐干净 JSON——常见脏输出本函数逐级兜住：
+      1) ```json``` 围栏；2) 前后夹带解释性散文；3) 单键 JSON 但字符串值含**裸换行**
+      （多行 markdown 最常踩，标准 json 直接报错）；4) 干脆只给正文 markdown，无 JSON。
+    out_key 给定（单产出语言细胞）时，无论哪种都收敛到 {out_key: 正文}；
+    out_key 为空时回退旧的「抓最外层 JSON」行为，兼容多键抽取细胞。
+    """
+    cleaned = _strip_fences(raw)
+    # ① 整段直接解析；② 抓最外层 {...} 再解析（处理前后夹带散文）
+    obj = _try_json_dict(cleaned)
+    if obj is None:
+        i, j = cleaned.find("{"), cleaned.rfind("}")
+        if i >= 0 and j > i:
+            obj = _try_json_dict(cleaned[i : j + 1])
+    if obj is not None:
+        if out_key is None:
+            return obj
+        if out_key in obj:
+            return {out_key: obj[out_key]}
+        if len(obj) == 1:  # 键名不符但只有一个键 → 取其值
+            return {out_key: next(iter(obj.values()))}
+    if out_key is None:
+        return _parse_json(raw)  # 旧式多键场景：尽力抓最外层 JSON
+    # ③ 兜底：定向解包 "out_key": "..."（应对结构换行+串内换行混合的极端脏输出）
+    m = re.search(r'"' + re.escape(out_key) + r'"\s*:\s*"(.*)"\s*}', cleaned, re.S)
+    if m:
+        body = m.group(1)
+        try:  # 还原 JSON 转义（含 \n \" 等）
+            return {out_key: json.loads('"' + body.replace("\n", "\\n").replace("\r", "")
+                                        .replace("\t", "\\t") + '"')}
+        except Exception:
+            return {out_key: body.replace('\\"', '"').replace("\\n", "\n").replace("\\t", "\t")}
+    # ④ 模型直接给了正文、没有任何 JSON → 原样作为该 section
+    return {out_key: cleaned}
+
+
 def stem_llm(reg: Registry) -> Capability:
     """通用语言细胞：未特化的 LLM 理解/生成能力。
     本身什么都不"是"，靠分化时注入的 task / instruction 条件特化。"""
@@ -118,7 +179,8 @@ def stem_llm(reg: Registry) -> Capability:
         prompt = _build_prompt(cond.get("task", "generic"), cond.get("instruction", ""), payload)
         if ctx.llm is None:
             raise RuntimeError("语言细胞需要 ctx.llm 后端")
-        return _parse_json(ctx.llm.complete(prompt))
+        # out_key：单产出细胞的目标键（diff 注入）。真模型脏输出经 coerce 稳健收敛。
+        return coerce_llm_output(ctx.llm.complete(prompt), cond.get("out_key"))
 
     return reg.add("llm·通用语言细胞", "stem", runner, desc="未特化的 LLM 能力")
 

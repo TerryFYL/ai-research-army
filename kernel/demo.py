@@ -27,6 +27,8 @@ def build(reg: Registry) -> dict:
     cells = {}
 
     def diff(base, name, cond, consumes, produces, desc=""):
+        if len(produces) == 1:  # 单产出键注入，供真模型脏输出稳健回填
+            cond = {**cond, "out_key": produces[0]}
         cap = differentiate(reg, base, name, cond, desc=desc)
         cap.consumes, cap.produces = set(consumes), set(produces)
         cells[produces[0]] = cap  # 用主产物当索引名

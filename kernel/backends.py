@@ -87,26 +87,65 @@ class StubLLM:
 
 
 class AnthropicLLM:
-    """真实 LLM 后端。需要 anthropic SDK + ANTHROPIC_API_KEY。
+    """真实 LLM 后端。需要 anthropic SDK + 凭证（ANTHROPIC_API_KEY，或本地基建的 AUTH_TOKEN+BASE_URL）。
 
-    接口与 StubLLM 完全一致（complete(prompt) -> str），可直接替换。
+    接口与 StubLLM/MockLLM/ClaudeAuthoredLLM 完全一致（complete(prompt) -> str），可直接替换。
+    设计为「换 key 即用」：凭证、网关地址、模型全部从环境变量读取，连本地大模型基建也无需改码。
+      · ANTHROPIC_API_KEY / ANTHROPIC_AUTH_TOKEN —— 凭证（任一）
+      · ANTHROPIC_BASE_URL                      —— 自建网关/代理地址（不设则走官方）
+      · ANTHROPIC_MODEL                         —— 模型 id（不设则用均衡档默认）
     模型按 evolution.md「原则4 分层模型使用」选取：分析/写作用均衡档，审查档可上调。
+    真模型输出的脏格式（围栏/裸换行/夹带散文）由 core.coerce_llm_output 在语言细胞侧兜底。
     """
 
-    def __init__(self, model: str = "claude-sonnet-4-6", max_tokens: int = 1024):
+    def __init__(self, model: str = None, max_tokens: int = 2048,
+                 system: str = None, max_retries: int = 3):
+        import os
+
         import anthropic  # 延迟导入：离线环境不受影响
 
-        self._client = anthropic.Anthropic()
-        self._model = model
+        self._anthropic = anthropic
+        kwargs = {}
+        key = os.environ.get("ANTHROPIC_API_KEY") or os.environ.get("ANTHROPIC_AUTH_TOKEN")
+        if key:
+            kwargs["api_key"] = key
+        base = os.environ.get("ANTHROPIC_BASE_URL")
+        if base:
+            kwargs["base_url"] = base  # 指向本地/自建大模型基建网关
+        self._client = anthropic.Anthropic(**kwargs)
+        self._model = model or os.environ.get("ANTHROPIC_MODEL", "claude-sonnet-4-6")
         self._max_tokens = max_tokens
+        self._system = system or (
+            "You are a meticulous biomedical scientific writer. Follow the INSTRUCTION exactly. "
+            "Never invent numbers, statistics or citations. Return ONLY the requested JSON object, "
+            "with no preamble, commentary or code fences.")
+        self._max_retries = max_retries
 
     def complete(self, prompt: str) -> str:
-        msg = self._client.messages.create(
-            model=self._model,
-            max_tokens=self._max_tokens,
-            messages=[{"role": "user", "content": prompt}],
+        import time
+        retryable = (
+            self._anthropic.APIConnectionError,
+            self._anthropic.RateLimitError,
+            self._anthropic.InternalServerError,
         )
-        return msg.content[0].text
+        last = None
+        for attempt in range(self._max_retries):
+            try:
+                msg = self._client.messages.create(
+                    model=self._model,
+                    max_tokens=self._max_tokens,
+                    system=self._system,
+                    messages=[{"role": "user", "content": prompt}],
+                )
+                # 串接所有 text block（兼容多块返回）
+                return "".join(
+                    b.text for b in msg.content if getattr(b, "type", None) == "text")
+            except retryable as e:  # 仅对暂时性错误退避重试；鉴权/参数错误直接抛出
+                last = e
+                if attempt < self._max_retries - 1:
+                    time.sleep(2 ** attempt)
+        raise RuntimeError(
+            f"AnthropicLLM 调用失败（重试 {self._max_retries} 次仍不可用）：{last}")
 
 
 # ── 数字格式化（基建：稿件正文与摘要共用，保证数字一致性） ──────────────────

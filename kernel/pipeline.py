@@ -102,6 +102,9 @@ def build_pipeline(reg: Registry):
     llm = stem_llm(reg)
 
     def diff(base, name, cond, consumes, produces, desc=""):
+        # 单产出 → 把目标键注入条件，供语言细胞稳健回填真模型输出（计算细胞忽略之）
+        if len(produces) == 1:
+            cond = {**cond, "out_key": produces[0]}
         cap = differentiate(reg, base, name, cond, desc=desc)
         cap.consumes, cap.produces = set(consumes), set(produces)
         return cap
@@ -134,7 +137,7 @@ def build_pipeline(reg: Registry):
     draft_specs = [
         ("draft_title·标题", "draft_title", "sec_title",
          "Write a concise title (<=66 characters, no abbreviations except HFpEF/LVEF/NT-proBNP, no "
-         "trailing period) that names the cohort design, exposure and outcome. Return only the title text."),
+         "trailing period) that names the cohort design, exposure and outcome. No numbers or tokens."),
         ("draft_abstract·摘要", "draft_abstract", "sec_abstract",
          base_rule + "Write '## Abstract' then <=150 words, no reference markers; use tokens "
          "{{N_TOTAL}}, {{N_EVENTS}}, {{ABSTRACT_EFFECT}} for all quantitative claims."),
@@ -158,7 +161,12 @@ def build_pipeline(reg: Registry):
     ]
     draft_cells = []
     for name, task, produces, instruction in draft_specs:
-        cell = diff(llm, name, {"task": task, "instruction": instruction},
+        # 统一钉死输出契约：只返回单键 JSON，键名即 produces（真模型据此回填，无歧义）
+        contract = (
+            f' Return ONLY a JSON object with the single key "{produces}", whose value is the '
+            f'complete section as one markdown string, e.g. {{"{produces}": "..."}}. '
+            f"Do not add any prose, explanation or code fences outside the JSON.")
+        cell = diff(llm, name, {"task": task, "instruction": instruction + contract},
                     consumes=["meta", "narrative"], produces=[produces],
                     desc="写作细胞：散文+token（数字归代码，SYNTHETIC）")
         draft_cells.append(cell)
@@ -195,7 +203,13 @@ def main():
         llm_backend, tag = ClaudeAuthoredLLM(), "ClaudeAuthoredLLM（真模型亲笔·捕获回放）"
     elif backend == "api":
         from .backends import AnthropicLLM
-        llm_backend, tag = AnthropicLLM(), "AnthropicLLM（真实 API·实时调用）"
+        try:
+            llm_backend = AnthropicLLM()
+        except ImportError:
+            raise SystemExit(
+                "✗ LLM_BACKEND=api 需要 anthropic SDK：先 `pip install anthropic`，"
+                "并设好 ANTHROPIC_API_KEY（如用本地网关再设 ANTHROPIC_BASE_URL / ANTHROPIC_MODEL）。")
+        tag = f"AnthropicLLM（真实 API·实时调用，model={llm_backend._model}）"
     else:
         llm_backend, tag = MockLLM(), "MockLLM（离线模板桩）"
     print(f"写作后端：{tag}")
