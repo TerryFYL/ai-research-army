@@ -114,6 +114,7 @@
 | `kernel/scientific_loop.py`（已跑通） | 闭环：编排+审核+修订自驱收敛到合格 |
 | `kernel/pipeline.py`（已跑通） | 全管线入口：data→stats→draft 自动装配 + 交接科学循环收敛 |
 | `kernel/` · `validators/manuscript_audit.py`（已跑通） | 机制与验证器的可运行证据 |
+| `case-library/RD-001-*`（沉淀） | 本次探索的思想/过程/机制/经验/采访记录五件套 |
 
 ---
 
