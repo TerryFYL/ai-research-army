@@ -1,0 +1,7 @@
+# 能力内核 M2 管线 · 依赖
+# 核心运行（合成数据 → 统计 → 写稿 → 审核收敛；mock / claude 后端均离线可跑）：
+PyYAML>=6.0          # 审核器读 standards/*.yaml；biostats/统计为纯 Python 零依赖
+
+# 仅 LLM_BACKEND=api（真模型实时调用）才需要；mock/claude 后端无需安装：
+#   pip install anthropic
+# anthropic>=0.40
