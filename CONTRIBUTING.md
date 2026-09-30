@@ -81,6 +81,20 @@ chore: .github 模板文件添加
 
 ---
 
+## CI 与自动合并
+
+`.github/workflows/ci.yml` 对每个 PR 依次执行：
+
+1. **仓库检查**（`.github/scripts/repo_checks.py`）：Python / Shell / YAML / JSON 语法、禁止入库文件、新增内容中的密钥、改动的 SKILL.md frontmatter 和 Markdown 相对链接。仓库里已有的问题只报警告，不阻塞。
+2. **Claude 自动评审**：只在安全、正确性、引用失实、学术诚信、违反仓库规则时阻塞；阻塞问题发行内评论，总结发在 PR 评论里。
+3. **自动合并**：检查通过且评审结论为通过时，自动 squash 合并进 `main`（Draft PR 会先转为 Ready）。
+
+- 需要在 Settings → Secrets and variables → Actions 配置 `CLAUDE_CODE_OAUTH_TOKEN`（`claude setup-token` 生成）或 `ANTHROPIC_API_KEY`
+- 给 PR 加 `do-not-merge` 标签可阻止自动合并
+- 本地预跑检查：`python .github/scripts/repo_checks.py --base origin/main`
+
+---
+
 ## Release / Tag 规范
 
 版本号遵循语义化版本：`vMAJOR.MINOR.PATCH`
