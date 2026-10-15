@@ -1,0 +1,18 @@
+cff-version: 1.2.0
+message: "If you use this software, please cite it as below."
+title: "AI Research Army"
+abstract: "A 9-agent pipeline in Claude Code that turns raw clinical data into submission-ready medical manuscript drafts."
+type: software
+authors:
+  - given-names: Terry
+    alias: TerryFYL
+repository-code: "https://github.com/TerryFYL/ai-research-army"
+url: "https://github.com/TerryFYL/ai-research-army"
+license: Apache-2.0
+date-released: "2026-03-18"
+keywords:
+  - claude-code
+  - ai-agents
+  - medical-research
+  - clinical-research
+  - manuscript-writing
