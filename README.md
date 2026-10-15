@@ -360,6 +360,20 @@ TEAM.md        团队角色与协作关系
 - 结论是否成立
 - 是否投稿以及投向何处
 
+## 与同类开源项目的对比（Compared with）
+
+以下项目也在用 AI 代理辅助医学科研，各有侧重；描述取自各项目自己的 README，选择时请以各项目最新文档为准。
+
+| 项目 | 侧重点（按其 README 描述） |
+|------|------|
+| AI Research Army（本项目） | 9 Agent 流水线：从原始数据画像、统计分析、图表、文献验证到 IMRAD 初稿、八层质控和投稿包 |
+| [Aperivue/medsci-skills](https://github.com/Aperivue/medsci-skills) | 面向医学研究全周期的 Agent Skills 集合（文献、研究设计、统计、图表、报告规范核查、投稿），支持 Claude Code、Codex、Cursor、GitHub Copilot |
+| [Joimerus/clo-author](https://github.com/Joimerus/clo-author) | worker-critic 成对代理的临床研究架构，含 CONSORT/STROBE/PRISMA 流程，默认针对呼吸介入领域 |
+| [johnson7788/meta-analysis-assistant](https://github.com/johnson7788/meta-analysis-assistant) | Claude Code 插件，6 个 Agent 协作完成 Meta 分析全流程 |
+| [MAGIC-AI4Med/MedSR-Copilot](https://github.com/MAGIC-AI4Med/MedSR-Copilot) | 遵循 PRISMA 的多代理系统综述助手 |
+
+简单说：如果你手里是**原始临床数据**、目标是**一篇原创研究稿件**，本项目是为这个场景设计的；如果你做的是系统综述/Meta 分析，上面后两个项目更专门。
+
 ## License
 
 [Apache-2.0](LICENSE)
