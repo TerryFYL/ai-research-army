@@ -129,13 +129,31 @@ if __name__ == "__main__":
     parser.add_argument("--model-a", help="模型A名称")
     parser.add_argument("--model-b", help="模型B名称")
     parser.add_argument("--task", help="任务名称")
+    parser.add_argument("--prompt", help="任务 Prompt（--type test 时写入 task_prompt）")
     parser.add_argument("--result", help="结果摘要")
     parser.add_argument("--insight", help="洞察")
+    parser.add_argument("--test-type", dest="test_type",
+                        default="comprehensive_task",
+                        help="测试类型（cross_validation / comprehensive_task）")
+    parser.add_argument("--score-a", dest="score_a", type=int, help="模型A得分")
+    parser.add_argument("--score-b", dest="score_b", type=int, help="模型B得分")
     parser.add_argument("--nickname", help="模型昵称")
 
     args = parser.parse_args()
 
-    if args.type == "observation":
+    if args.type == "test":
+        save_test_record(
+            test_type=args.test_type,
+            model_a=args.model_a or args.model,
+            model_b=args.model_b,
+            task_name=args.task or "",
+            task_prompt=args.prompt,
+            result_summary=args.result,
+            insights=args.insight,
+            model_a_score=args.score_a,
+            model_b_score=args.score_b,
+        )
+    elif args.type == "observation":
         save_observation(args.model, args.task, args.result, args.insight)
     elif args.type == "profile":
         update_model_profile(args.model, nickname=args.nickname)
