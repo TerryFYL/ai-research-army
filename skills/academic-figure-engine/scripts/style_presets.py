@@ -8,6 +8,7 @@ different journals and use cases.
 
 import matplotlib.pyplot as plt
 import matplotlib as mpl
+from cycler import Cycler
 from typing import Optional, Dict, Any
 
 
@@ -321,10 +322,15 @@ def create_style_template(output_file: str = 'publication.mplstyle') -> None:
         f.write("# Usage: plt.style.use('publication.mplstyle')\n\n")
 
         for key, value in style.items():
-            if isinstance(value, mpl.cycler):
-                # Handle cycler specially
-                colors = [c['color'] for c in value]
-                f.write(f"axes.prop_cycle : cycler('color', {colors})\n")
+            if isinstance(value, Cycler):
+                # '#' starts a comment in .mplstyle files, so hex colors
+                # must be written without the leading '#'
+                colors = ', '.join(repr(str(c['color']).lstrip('#')) for c in value)
+                f.write(f"{key} : cycler('color', [{colors}])\n")
+            elif isinstance(value, (list, tuple)):
+                # .mplstyle parses lists as comma-separated values,
+                # not as Python reprs
+                f.write(f"{key} : {', '.join(str(v) for v in value)}\n")
             else:
                 f.write(f"{key} : {value}\n")
 
